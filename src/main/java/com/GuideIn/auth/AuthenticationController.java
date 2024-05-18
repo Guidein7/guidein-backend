@@ -32,9 +32,7 @@ public class AuthenticationController {
 	  }
 	  
 	  @PostMapping("/register/otpvalidate")
-	  public ResponseEntity<String> validateOTP(@RequestBody OtpRequest request){
-		  
-		  System.out.println("in otpvalidate");
+	  public ResponseEntity<String> validateOTP(@RequestBody OtpValidateRequest request){
 		  
 		  if(otpService.validateOTP(request))
 			  return ResponseEntity.ok("OTP validated successfully");
@@ -43,23 +41,36 @@ public class AuthenticationController {
 			  return new ResponseEntity<>("Invalid OTP", HttpStatus.UNAUTHORIZED);
 	  }
 	  
+	  @PostMapping("/register/sendotp")
+	  public ResponseEntity<String> sendOTP(@RequestBody OtpRequest request){
+		  if(otpService.sendOTP(request))
+			  return ResponseEntity.ok("OTP sent successfully");
+		  
+		  else 
+			  return new ResponseEntity<>("unable to send OTP", HttpStatus.FORBIDDEN);	
+	  }
+	  
 	  @PostMapping("/authenticate")
 	  public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
 		
 		AuthenticationResponse response = service.authenticate(request);
+		
+		if(response.getToken().equals("InValid credentials"))
+			return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
 		  
 		if(response.getToken().equals("Not a verfied user"))
 			return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
 		
-	    return ResponseEntity.ok(service.authenticate(request));
+	    return ResponseEntity.ok(response);
 	  }
 	  
-	  
-	  @GetMapping("/greet")
-	  public ResponseEntity<String> greet(){
-		  return ResponseEntity.ok("in greet");
+	  @PostMapping("register/forgetpassword")
+	  public ResponseEntity<String> forgetPassword(@RequestBody ForgetPasswordRequest request){
+		  
+		  if(!service.forgetPassword(request))
+			  return new ResponseEntity<>("Unable to reset password", HttpStatus.FORBIDDEN);
+		  
+		  return ResponseEntity.ok("Password rest successful");
+		  
 	  }
-	  
-	  
-	 
 }

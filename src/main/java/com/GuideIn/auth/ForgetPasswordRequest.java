@@ -3,18 +3,15 @@ package com.GuideIn.auth;
 import com.GuideIn.user.Role;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthenticationRequest {
-	
-	private String email;
-	private String mobile;
-	String password;
+public class ForgetPasswordRequest {
+	String email;
+	String mobile;
+	String newPassword;
 	Role role;
 }

@@ -31,6 +31,7 @@ public class SecurityConfiguration {
 	        .authorizeHttpRequests(auth -> auth
 	        		.requestMatchers("/api/guidein/v1/auth/**")
 	        		.permitAll()
+	        		.requestMatchers("/api/guidein/v1/job_poster/**").hasAuthority("JOB_POSTER")
 	        		.anyRequest()
 	        		.authenticated())
 	        .sessionManagement(session -> session

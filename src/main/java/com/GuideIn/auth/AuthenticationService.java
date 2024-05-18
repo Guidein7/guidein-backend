@@ -8,6 +8,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.GuideIn.config.JwtService;
 import com.GuideIn.user.User;
@@ -28,7 +29,8 @@ public class AuthenticationService {
 	  
 	  @Transactional
 	  public boolean register(RegisterRequest request) throws DataAccessException {
-		if(repository.findByEmailAndRole(request.getEmail(),request.getRole()).isEmpty()) {
+		if(repository.findByEmailAndRole(request.getEmail(),request.getRole()).isEmpty() && 
+				repository.findByMobileAndRole(request.getMobile(), request.getRole()).isEmpty()) {
 			var user = User.builder()
 			        .username(request.getUsername())
 			        .email(request.getEmail())
@@ -38,7 +40,7 @@ public class AuthenticationService {
 			        .verified(false)
 			        .build();
 			repository.save(user);
-			otpService.sendOTP(user.getName() , user.getMobile());
+			otpService.sendOTP(user.getEmail(), user.getMobile());
 			return true;
 		}
 		else return false; 
@@ -46,15 +48,28 @@ public class AuthenticationService {
 	  
 	  @Transactional
 	  public AuthenticationResponse authenticate(AuthenticationRequest request) throws DataAccessException{
-	    authenticationManager.authenticate(
-	        new UsernamePasswordAuthenticationToken(
-	            request.getEmail(),
-	            request.getPassword()
-	        )
-	    );
-	    var user = repository.findByEmailAndRole(request.getEmail(), request.getRole())
-	        .orElseThrow();
+	    		
+	    User user = null;
 	    
+		try {
+			if(request.getEmail().isEmpty())
+				user = repository.findByMobileAndRole(request.getMobile(), request.getRole()).orElseThrow();
+			else
+				user = repository.findByEmailAndRole(request.getEmail(), request.getRole()).orElseThrow();
+		} catch (Exception e) {
+			return AuthenticationResponse
+	    			.builder()
+	    			.token("InValid credentials")
+	    			.build();
+		}
+	
+	    authenticationManager.authenticate(
+		        new UsernamePasswordAuthenticationToken(
+		            user.getEmail() +","+ request.getRole(),//because loadByUserName only has userEmai parameter
+		            request.getPassword()
+		        )
+		    );
+    
 	    if(!user.getVerified())
 	    	return AuthenticationResponse
 	    			.builder()
@@ -70,5 +85,25 @@ public class AuthenticationService {
 	        .token(jwtToken)
 	        .build();
 	  }
-	
+	  
+	  
+	  @Transactional
+	  public boolean forgetPassword(ForgetPasswordRequest request) {
+		  
+		 User user = null;
+		 
+		 try {
+			 if(request.getEmail().isEmpty())
+				 user = repository.findByMobileAndRole(request.getMobile(), request.getRole()).orElseThrow(); 
+			 else
+				user = repository.findByEmailAndRole(request.getEmail(), request.getRole()).orElseThrow();
+		 }		 
+		 catch (Exception e) {
+			 return false;
+		 }		 
+		 user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+		 repository.save(user);
+		 return true;	 
+	  }	 
+	  
 }

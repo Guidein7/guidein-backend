@@ -7,11 +7,14 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.GuideIn.user.Role;
+import com.GuideIn.user.User;
 import com.GuideIn.user.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -25,8 +28,16 @@ public class ApplicationConfig {
 
 	  @Bean
 	  public UserDetailsService userDetailsService() {
-	    return username -> repository.findByEmail(username)
-	        .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+	    return new UserDetailsService() {
+			
+			@Override
+			public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+				String userDetails[] = username.split(","); //userEmai and userRole
+				User user = repository.findByEmailAndRole(userDetails[0],Role.valueOf(userDetails[1]))
+				        .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+				return user;
+			}
+		};
 	  }
 
 	  @Bean

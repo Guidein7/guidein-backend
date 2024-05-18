@@ -3,18 +3,17 @@ package com.GuideIn.auth;
 import com.GuideIn.user.Role;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthenticationRequest {
+public class OtpValidateRequest {
 	
 	private String email;
 	private String mobile;
-	String password;
-	Role role;
+	private Role role;
+	private String otp;
+
 }

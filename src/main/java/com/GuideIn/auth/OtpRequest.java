@@ -1,5 +1,7 @@
 package com.GuideIn.auth;
 
+import com.GuideIn.user.Role;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,9 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OtpRequest {
-	
 	private String email;
 	private String mobile;
-	private String otp;
-
+	private Role role;
 }
