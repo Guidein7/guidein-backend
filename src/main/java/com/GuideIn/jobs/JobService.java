@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.GuideIn.jobSeeker.JobSeeker;
+
 import jakarta.transaction.Transactional;
 
 @Service
@@ -18,10 +20,8 @@ public class JobService {
 	JobRepository repo;
 	
 	@Transactional
-	public boolean saveJob(Job job) {
-		
-		job.setEnabled(true);
-		
+	public boolean saveJob(Job job) {	
+		job.setEnabled(true);		
 		try {
 			repo.save(job);
 		} catch (Exception e) {
@@ -31,6 +31,7 @@ public class JobService {
 		return true;
 	}
 	
+	@Transactional
 	public boolean updateJob(JobUpdateRequest request) {
 		Job job = null;
 		try {
@@ -51,13 +52,47 @@ public class JobService {
 		return true;
 	}
 	
-	public List<Job> getPostedJobs(String postedBy){
-		
+	@Transactional
+	public boolean disableJob(Long jobId) {
+		Job job = null;
+		try {
+			job = repo.findById(jobId).orElseThrow();
+			job.setEnabled(false);
+			repo.save(job);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	
+	@Transactional
+	public boolean enableJob(Long jobId) {
+		Job job = null;
+		try {
+			job = repo.findById(jobId).orElseThrow();
+			job.setEnabled(true);
+			repo.save(job);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	
+	public List<Job> getPostedJobs(String postedBy){ //employee posted jobs		
 		List<Job> jobs = repo.findAllByJobPostedBy(postedBy);
 		for(Job job : jobs) {
 			job.setPostedOn(getTimeAgo(job.getPostedOn()));
+		}	
+		return jobs;
+	}
+	
+	public List<Job> fetchPostedJobs(){ //all posted jobs
+		List<Job> jobs = repo.findByEnabled(true);
+		for(Job job : jobs) {
+			job.setPostedOn(getTimeAgo(job.getPostedOn()));
 		}
-		
 		return jobs;
 	}
 	
@@ -89,6 +124,5 @@ public class JobService {
 	            return (duration.toDays() / 30) + " months ago";
 	        }
 	}
-
 	
 }

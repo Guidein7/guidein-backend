@@ -8,7 +8,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.GuideIn.config.JwtService;
 import com.GuideIn.user.User;
@@ -79,6 +78,7 @@ public class AuthenticationService {
 	    Map<String, Object> extraClaims = new HashMap<>();
 	    extraClaims.put("authority",user.getRole());
 	    extraClaims.put("username",user.getName());
+	    extraClaims.put("mobile", user.getMobile());
 	    var jwtToken = jwtService.generateToken(extraClaims,user);
 	    
 	    return AuthenticationResponse.builder()

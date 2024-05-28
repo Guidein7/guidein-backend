@@ -1,5 +1,6 @@
 package com.GuideIn.config;
 
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -12,6 +13,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,12 +28,13 @@ public class SecurityConfiguration {
 	  @Bean
 	  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 	    http
-	        .cors(Customizer.withDefaults())
+	    	.cors(Customizer.withDefaults())
 	        .csrf(csrf->csrf.disable())
 	        .authorizeHttpRequests(auth -> auth
 	        		.requestMatchers("/api/guidein/v1/auth/**")
 	        		.permitAll()
 	        		.requestMatchers("/api/guidein/v1/job_poster/**").hasAuthority("JOB_POSTER")
+	        		.requestMatchers("/api/guidein/v1/job_seeker/**").hasAuthority("JOB_SEEKER")
 	        		.anyRequest()
 	        		.authenticated())
 	        .sessionManagement(session -> session
@@ -47,13 +50,18 @@ public class SecurityConfiguration {
 	      CorsConfiguration configuration = new CorsConfiguration();
 	      configuration.addAllowedOrigin("*"); 
 	      configuration.addAllowedMethod("*"); 
-	      configuration.addAllowedHeader("*"); 
+	      configuration.addAllowedHeader("*");  
 	      
 	      UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 	      source.registerCorsConfiguration("/**", configuration); 
 
 	      return source;
 	  }
+	  
+	  	@Bean
+	    public CorsFilter corsFilter() {
+	        return new CorsFilter(corsConfigurationSource());
+	    }
 	  
 	
 }
