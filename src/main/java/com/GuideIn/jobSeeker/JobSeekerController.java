@@ -1,8 +1,6 @@
 package com.GuideIn.jobSeeker;
 
-
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +15,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
-import com.GuideIn.jobPoster.JobPoster;
 import com.GuideIn.jobs.Job;
+import com.GuideIn.jobs.JobDTO;
 import com.GuideIn.jobs.JobService;
+import com.GuideIn.referral.ReferralRequestDTO;
+import com.GuideIn.referral.ReferralStatus;
 
 @RestController
 @RequestMapping("/api/guidein/v1/job_seeker")
@@ -33,9 +32,9 @@ public class JobSeekerController {
 	@Autowired
 	JobSeekerService jobSeekerService;
 	
-	@GetMapping("/postedjobs")
-	public ResponseEntity<List<Job>> getPostedJobs(){
-		return new ResponseEntity<>(service.fetchPostedJobs(),HttpStatus.OK);
+	@GetMapping("/postedjobs/{email}")
+	public ResponseEntity<List<JobDTO>> getPostedJobs(@PathVariable String email ){
+		return new ResponseEntity<>(service.fetchPostedJobs(email),HttpStatus.OK);
 	} 
 	
 	@PostMapping("/saveProfile")
@@ -60,6 +59,13 @@ public class JobSeekerController {
 		else return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null); //204
 	}
 	
+	@GetMapping("/checkProfile/{email}")
+	public ResponseEntity<String> checkProfile(@PathVariable String email){
+		if(jobSeekerService.checkProfile(email))
+			return ResponseEntity.ok("profile available");
+		else return new ResponseEntity<>("profile Un-available", HttpStatus.NO_CONTENT); //204
+	}
+	
 	@PostMapping("/saveJob")
 	public ResponseEntity<String> saveJob(@RequestParam("email") String email, @RequestParam("jobId") Long jobId){
 		if(jobSeekerService.saveJob(email, jobId))
@@ -77,5 +83,26 @@ public class JobSeekerController {
 		if(jobSeekerService.deleteSavedJob(email, jobId))
 			return ResponseEntity.ok("job deleted successfully");
 		else return new ResponseEntity<>("unable to delete savedjob", HttpStatus.FORBIDDEN);
+	}
+	
+	@PostMapping("/requestReferral")
+	public ResponseEntity<String> requestReferral(@ModelAttribute ReferralRequestDTO request) throws IOException{
+		if(jobSeekerService.requestReferral(request))
+			return ResponseEntity.ok("Referral requested successfully");
+		else return new ResponseEntity<>("unable to request referral", HttpStatus.FORBIDDEN);
+	}
+	
+//	@GetMapping("/getReferralStatus")
+//	public ResponseEntity<ReferralStatusDTO> getReferralStatus(@RequestParam("requestedBy") String requestedBy, @RequestParam("jobId") Long jobId){
+//		ReferralStatusDTO referralStatusDTO = jobSeekerService.getReferralStatus(requestedBy, jobId);
+//		if(referralStatusDTO.getReferralStatus().equals(ReferralStatus.UN_REQUESTED))
+//			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);  //204
+//		return ResponseEntity.ok(referralStatusDTO);
+//	}
+	
+	@GetMapping("/getAppliedReferralStatus/{email}")
+	public ResponseEntity<List<AppliedReferralStatusDTO>> getAppliedReferralStatus(@PathVariable String email){	
+		 return ResponseEntity.ok(jobSeekerService.getAppliedReferralStatus(email));
+		
 	}
 }

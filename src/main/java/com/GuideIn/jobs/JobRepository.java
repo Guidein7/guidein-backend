@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 public interface JobRepository extends JpaRepository<Job, Long> {
 	List<Job> findAllByJobPostedBy(String postedBy);
 	List<Job> findByEnabled(boolean check);
+	Optional<Job> findByJobId(Long jobId);
 	Optional<Job> findByJobIdAndEnabled(Long jobId, boolean check);
 }
 

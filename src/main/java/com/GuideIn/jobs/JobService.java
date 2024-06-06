@@ -3,13 +3,20 @@ package com.GuideIn.jobs;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.GuideIn.jobPoster.JobPoster;
+import com.GuideIn.jobPoster.JobPosterRepo;
 import com.GuideIn.jobSeeker.JobSeeker;
+import com.GuideIn.referral.Referral;
+import com.GuideIn.referral.ReferralRepository;
+import com.GuideIn.referral.ReferralRequestDTO;
+import com.GuideIn.referral.ReferralStatus;
 
 import jakarta.transaction.Transactional;
 
@@ -18,6 +25,12 @@ public class JobService {
 	
 	@Autowired
 	JobRepository repo;
+	
+	@Autowired
+	ReferralRepository referralRepo;
+	
+	@Autowired
+	JobPosterRepo jobPosterRepo;
 	
 	@Transactional
 	public boolean saveJob(Job job) {	
@@ -88,13 +101,41 @@ public class JobService {
 		return jobs;
 	}
 	
-	public List<Job> fetchPostedJobs(){ //all posted jobs
+	public List<JobDTO> fetchPostedJobs(String email){ //all posted jobs - for jobSeeker
 		List<Job> jobs = repo.findByEnabled(true);
+		List<JobDTO> listOfJobDTO = new ArrayList<>(); 
 		for(Job job : jobs) {
-			job.setPostedOn(getTimeAgo(job.getPostedOn()));
+			String jobPosterName;
+			ReferralStatus status = ReferralStatus.UN_REQUESTED;
+			try {
+				JobPoster jobPoster = jobPosterRepo.findByEmail(job.getJobPostedBy()).orElseThrow();
+				jobPosterName = jobPoster.getName();
+			} catch (Exception e) {
+				e.printStackTrace();
+				return listOfJobDTO;
+			}
+			Referral referral =  referralRepo.findByRequestedByAndJobId(email, job.getJobId()).orElse(null);
+			if(referral != null)
+				status = referral.getStatus();
+			var jobDTO = JobDTO.builder()
+					.jobId(job.getJobId())
+					.jobTitle(job.getJobTitle())
+					.companyName(job.getCompanyName())
+					.jobLocation(job.getJobLocation())
+					.workMode(job.getWorkMode())
+					.jobType(job.getJobType())
+					.jobDescriptionLink(job.getJobDescriptionLink())
+					.educationLevel(job.getEducationLevel())
+					.experienceRequired(job.getExperienceRequired())
+					.jobPostedBy(job.getJobPostedBy())
+					.jobPosterName(jobPosterName)
+					.postedOn(getTimeAgo(job.getPostedOn()))
+					.status(status)
+					.build();
+			listOfJobDTO.add(jobDTO);
 		}
-		return jobs;
-	}
+		return listOfJobDTO;
+	}	 
 	
 	public String getTimeAgo(String postedAt) {
 		
@@ -124,5 +165,6 @@ public class JobService {
 	            return (duration.toDays() / 30) + " months ago";
 	        }
 	}
+
 	
 }

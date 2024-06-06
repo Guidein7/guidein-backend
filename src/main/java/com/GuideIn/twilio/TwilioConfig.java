@@ -1,4 +1,4 @@
-package com.GuideIn.auth;
+package com.GuideIn.twilio;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;

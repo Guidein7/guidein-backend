@@ -1,24 +1,25 @@
 package com.GuideIn.jobPoster;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.GuideIn.jobs.Job;
 import com.GuideIn.jobs.JobService;
 import com.GuideIn.jobs.JobUpdateRequest;
-
-import jakarta.websocket.server.PathParam;
+import com.GuideIn.referral.ReferralSubmitDTO;
 
 @RestController
 @RequestMapping("/api/guidein/v1/job_poster")
@@ -84,5 +85,45 @@ public class JobPosterController {
 		if(jobPosterService.updateProfile(request))
 			return ResponseEntity.ok("JobPoster profile updated successfully");
 		else return new ResponseEntity<>("unable to update JobPoster profile", HttpStatus.FORBIDDEN);
+	}
+	
+	@GetMapping("/getRequestedReferrals/{email}")
+	public ResponseEntity<List<ReferralsDTO>> getRequestedReferrals(@PathVariable String email){
+		return new ResponseEntity<>(jobPosterService.getRequestedreferrals(email),HttpStatus.OK);
+	}
+	
+	@GetMapping("/getReferralRequest/{referralId}")
+	public ResponseEntity<CandidateAndJobDetailsDTO> getReferralRequest(@PathVariable Long referralId){
+		CandidateAndJobDetailsDTO candidateAndjobDetails =  jobPosterService.getReferralRequest(referralId);
+		if(candidateAndjobDetails != null)
+			return ResponseEntity.ok(candidateAndjobDetails);
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+	}
+	
+	@PostMapping("/rejectReferral")
+	public ResponseEntity<String> rejectReferral(@RequestBody RejectReferralDTO request){
+		if(jobPosterService.rejectReferral(request))
+			return ResponseEntity.ok("Referral rejected successfully");
+		return new ResponseEntity<>("unable to reject referral", HttpStatus.FORBIDDEN);
+	}
+	
+	@PostMapping("/submitReferral")
+	public ResponseEntity<String> submitReferral(@ModelAttribute ReferralSubmitDTO request) throws IOException {
+		if(jobPosterService.submitReferral(request))
+			return ResponseEntity.ok("Referral submitted successfully for verification");
+		return new ResponseEntity<>("unable to submit referral for verification", HttpStatus.FORBIDDEN);
+	}
+	
+	@GetMapping("/getAllReferredStatus/{email}")
+	public ResponseEntity<List<ReferralsDTO>> getALLReferredStatus(@PathVariable String email){
+		return new ResponseEntity<>(jobPosterService.getALLReferredStatus(email),HttpStatus.OK);
+	}
+	
+	@GetMapping("/getReferredStatus/{referralId}")
+	public ResponseEntity<CandidateAndJobDetailsDTO> getReferredStatus(@PathVariable Long referralId){
+		CandidateAndJobDetailsDTO candidateAndjobDetails =  jobPosterService.getReferralRequest(referralId);
+		if(candidateAndjobDetails != null)
+			return ResponseEntity.ok(candidateAndjobDetails);
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
 	}
 }

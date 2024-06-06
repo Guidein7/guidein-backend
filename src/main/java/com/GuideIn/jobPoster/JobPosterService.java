@@ -1,7 +1,20 @@
 package com.GuideIn.jobPoster;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.GuideIn.jobSeeker.JobSeeker;
+import com.GuideIn.jobSeeker.JobSeekerRepo;
+import com.GuideIn.jobs.Job;
+import com.GuideIn.jobs.JobRepository;
+import com.GuideIn.jobs.JobService;
+import com.GuideIn.referral.Referral;
+import com.GuideIn.referral.ReferralRepository;
+import com.GuideIn.referral.ReferralStatus;
+import com.GuideIn.referral.ReferralSubmitDTO;
 
 import jakarta.transaction.Transactional;
 
@@ -9,7 +22,19 @@ import jakarta.transaction.Transactional;
 public class JobPosterService {
 	
 	@Autowired
+	JobService jobService;
+	
+	@Autowired
 	JobPosterRepo repo;
+	
+	@Autowired
+	ReferralRepository referralRepo;
+	
+	@Autowired
+	JobRepository jobRepo;
+	
+	@Autowired
+	JobSeekerRepo jobSeekerRepo;
 	
 	@Transactional
 	public boolean saveProfile(JobPoster jobPoster) {
@@ -42,6 +67,129 @@ public class JobPosterService {
 			return false;
 		}
 		return true;
+	}
+
+	public List<ReferralsDTO> getRequestedreferrals(String email) {
+		List<ReferralsDTO> requestedReferrals = new ArrayList<>();
+		List<Referral> referrals = referralRepo.findAllByJobPostedByAndStatus(email, ReferralStatus.REQUESTED);
+
+		for(Referral referral : referrals) {		
+			try {
+				JobSeeker jobSeeker = jobSeekerRepo.findByEmail(referral.getRequestedBy()).orElseThrow();
+				Job job = jobRepo.findById(referral.getJobId()).orElseThrow();
+				
+				var requestedreferral = ReferralsDTO.builder()
+						.candidateName(jobSeeker.getName())
+						.candidateExperience(jobSeeker.getExperience())
+						.referralFor(job.getJobTitle())
+						.referralId(referral.getReferralId())
+						.requestedOn(referral.getRequstedOn())
+						.status(referral.getStatus())
+						.reason(referral.getReason())
+						.build();
+				
+				requestedReferrals.add(requestedreferral);
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+				return requestedReferrals;
+			} 
+		}		
+		return requestedReferrals;
+	}
+	
+	public CandidateAndJobDetailsDTO getReferralRequest(Long referralId) {
+		CandidateAndJobDetailsDTO candidateAndJobDetailsDTO = null;
+		
+		try {
+			Referral referral = referralRepo.findById(referralId).orElseThrow();
+			JobSeeker jobSeeker = jobSeekerRepo.findByEmail(referral.getRequestedBy()).orElseThrow();
+			Job job = jobRepo.findById(referral.getJobId()).orElseThrow();
+			
+			
+			candidateAndJobDetailsDTO = CandidateAndJobDetailsDTO.builder()
+					.candidateName(jobSeeker.getName())
+					.candidateEmail(jobSeeker.getEmail())
+					.candidateMobile(jobSeeker.getMobile())
+					.candidateExperience(jobSeeker.getExperience())
+					.candidateLinkedInUrl(jobSeeker.getLinkedInUrl())
+					.referralFor(job.getJobTitle())
+					.referralId(referral.getReferralId())
+					.jobId(job.getJobId())
+					.company(job.getCompanyName())
+					.jobLocation(job.getJobLocation())
+					.workMode(job.getWorkMode())
+					.experienceRequired(job.getExperienceRequired())
+					.jobPostedOn(jobService.getTimeAgo(job.getPostedOn()))
+					.referralStatus(referral.getStatus())
+					.candidateResume(referral.getCandidateResume())
+					.build();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return candidateAndJobDetailsDTO;
+		}
+		return candidateAndJobDetailsDTO;
+	}
+	
+	@Transactional
+	public boolean rejectReferral(RejectReferralDTO request) {		
+		try {
+			Referral referral = referralRepo.findById(request.getReferralId()).orElseThrow();
+			referral.setStatus(ReferralStatus.REJECTED);
+			referral.setReason(request.getReason());
+			referral.setComments(request.getComments());
+			referralRepo.save(referral);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	
+	@Transactional
+	public boolean submitReferral(ReferralSubmitDTO request) {
+		try {
+			Referral referral = referralRepo.findById(request.getReferralId()).orElseThrow();
+			referral.setDateOfReferral(request.getDateOfReferral());
+			referral.setMethodOfReferral(request.getMethodOfReferral());
+			referral.setComments(request.getComments());
+			referral.setProof(request.getProof().getBytes());
+			referral.setStatus(ReferralStatus.IN_VERIFICATION);
+			referralRepo.save(referral);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+
+	public List<ReferralsDTO> getALLReferredStatus(String email) {
+		List<ReferralsDTO> referredStatuses = new ArrayList<>();
+		List<Referral> referrals = referralRepo.findAllByJobPostedByAndNotRequested(email, ReferralStatus.REQUESTED);
+
+		for(Referral referral : referrals) {		
+			try {
+				JobSeeker jobSeeker = jobSeekerRepo.findByEmail(referral.getRequestedBy()).orElseThrow();
+				Job job = jobRepo.findById(referral.getJobId()).orElseThrow();
+				
+				var referredReferral = ReferralsDTO.builder()
+						.candidateName(jobSeeker.getName())
+						.candidateExperience(jobSeeker.getExperience())
+						.referralFor(job.getJobTitle())
+						.referralId(referral.getReferralId())
+						.requestedOn(referral.getRequstedOn())
+						.status(referral.getStatus())
+						.reason(referral.getReason())
+						.build();
+				
+				referredStatuses.add(referredReferral);
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+				return referredStatuses;
+			} 
+		}		
+		return referredStatuses;
 	}
 	
 	

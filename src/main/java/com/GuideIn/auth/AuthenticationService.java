@@ -3,6 +3,7 @@ package com.GuideIn.auth;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,6 +25,7 @@ public class AuthenticationService {
 	  private final PasswordEncoder passwordEncoder;
 	  private final JwtService jwtService;
 	  private final AuthenticationManager authenticationManager;
+	  @Autowired
 	  private final OtpService otpService;
 	  
 	  @Transactional
