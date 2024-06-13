@@ -6,12 +6,19 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.GuideIn.jobPoster.JobPoster;
+import com.GuideIn.jobPoster.JobPosterRepo;
 import com.GuideIn.jobs.Job;
+import com.GuideIn.jobs.JobDTO;
 import com.GuideIn.jobs.JobRepository;
+import com.GuideIn.jobs.JobService;
 import com.GuideIn.referral.Referral;
 import com.GuideIn.referral.ReferralRepository;
 import com.GuideIn.referral.ReferralRequestDTO;
 import com.GuideIn.referral.ReferralStatus;
+import com.GuideIn.subscription.Subscription;
+import com.GuideIn.subscription.SubscriptionRepository;
+import com.GuideIn.subscription.SubscriptionService;
 
 import jakarta.transaction.Transactional;
 
@@ -29,6 +36,15 @@ public class JobSeekerService {
 
 	@Autowired
 	ReferralRepository referralRepo;
+	
+	@Autowired
+	JobPosterRepo jobPosterRepo;
+	
+	@Autowired
+	JobService jobService;
+	
+	@Autowired
+	SubscriptionRepository subscriptionRepo;
 	
 	@Transactional
 	public boolean saveProfile(JobSeekerProfileDTO request) {
@@ -97,13 +113,43 @@ public class JobSeekerService {
 		return true;
 	}
 
-	public List<Job> getSavedJobs(String email) {
-		List<Job> savedJobs = new ArrayList<>();
+	public List<JobDTO> getSavedJobs(String email) {
+		List<JobDTO> savedJobs = new ArrayList<>();
 		List<Long> jobIds = savedJobRepo.findJobIdsByEmail(email);
 		for(Long jobId : jobIds) {	
-			Job job = jobRepo.findByJobIdAndEnabled(jobId, true).orElse(null);
-			if(job != null)
-				savedJobs.add(job);
+			try {
+				ReferralStatus status = ReferralStatus.UN_REQUESTED;
+				Job job = jobRepo.findByJobIdAndEnabled(jobId, true).orElse(null);
+				if(job != null) {
+					JobPoster jobPoster = jobPosterRepo.findByEmail(job.getJobPostedBy()).orElseThrow();
+					Referral referral = referralRepo.findByRequestedByAndJobId(email, job.getJobId()).orElse(null);
+					
+					if(referral != null)
+						status = referral.getStatus();
+				
+					var jobDTO = JobDTO.builder()
+							.jobId(job.getJobId())
+							.jobTitle(job.getJobTitle())
+							.companyName(job.getCompanyName())
+							.jobLocation(job.getJobLocation())
+							.workMode(job.getWorkMode())
+							.jobType(job.getJobType())
+							.jobDescriptionLink(job.getJobDescriptionLink())
+							.educationLevel(job.getEducationLevel())
+							.experienceRequired(job.getExperienceRequired())
+							.jobPostedBy(job.getJobPostedBy())
+							.jobPosterName(jobPoster.getName())
+							.postedOn(jobService.getTimeAgo(job.getPostedOn()))
+							.status(status)
+							.build();
+					
+						savedJobs.add(jobDTO);	
+				}
+			} 
+			catch (Exception e) {
+				e.printStackTrace();
+				return savedJobs;
+			}
 		}
 		return savedJobs;
 	}
@@ -118,31 +164,29 @@ public class JobSeekerService {
 		}
 		return true;
 	}
-	
-//	public ReferralStatusDTO getReferralStatus(String requestedBy, Long jobId) {
-//		ReferralStatusDTO referralStatusDTO = new ReferralStatusDTO(ReferralStatus.UN_REQUESTED);
-//		try {
-//			Referral referral =	referralRepo.findByRequestedByAndJobId(requestedBy, jobId).orElseThrow();
-//			referralStatusDTO.setReferralStatus(referral.getStatus());
-//		} catch (Exception e) {
-//			return referralStatusDTO;
-//		}
-//		return referralStatusDTO;
-//	}
 
 	@Transactional
 	public boolean requestReferral(ReferralRequestDTO request) {
-		Referral referral = null;
 		try {
-			referral = referralRepo.findByRequestedByAndJobId(request.getRequestedBy(), request.getJobId())
-					.orElse(new Referral());
-			referral.setJobId(request.getJobId());
-			referral.setRequestedBy(request.getRequestedBy());
-			referral.setCandidateResume(request.getResume().getBytes());
-			referral.setJobPostedBy(request.getJobPostedBy());
-			referral.setStatus(ReferralStatus.REQUESTED);
-	
-			referralRepo.save(referral);
+			Subscription subscription = subscriptionRepo.findByEmailAndActive(request.getRequestedBy(), true).orElseThrow();
+			int availableCredits = subscription.getAvailableReferralCredits();
+			if(availableCredits > 0) {
+			
+				Referral referral = referralRepo.findByRequestedByAndJobId(request.getRequestedBy(), request.getJobId())
+						.orElse(new Referral());
+				referral.setJobId(request.getJobId());
+				referral.setRequestedBy(request.getRequestedBy());
+				referral.setCandidateResume(request.getResume().getBytes());
+				referral.setJobPostedBy(request.getJobPostedBy());
+				referral.setStatus(ReferralStatus.REQUESTED);
+				
+				subscription.setAvailableReferralCredits(availableCredits - 1);
+				
+				referralRepo.save(referral);
+				subscriptionRepo.save(subscription);
+			}
+			else return false;
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
@@ -157,19 +201,27 @@ public class JobSeekerService {
 			List<Referral> referrals = referralRepo.findAllByRequestedBy(email);		
 			for(Referral referral : referrals) {
 				Job job = jobRepo.findById(referral.getJobId()).orElseThrow();
+				JobPoster jobPoster = jobPosterRepo.findByEmail(job.getJobPostedBy()).orElseThrow();
 				if(referral.getStatus() == ReferralStatus.IN_VERIFICATION)
 					referral.setStatus(ReferralStatus.IN_PROGRESS);
 				if(referral.getStatus() == ReferralStatus.VERIFICATION_FAILED)
 					referral.setStatus(ReferralStatus.REJECTED);
 				AppliedReferralStatusDTO appliedReferral = AppliedReferralStatusDTO.builder()
+						.referralId(referral.getReferralId())
 						.jobTitle(job.getJobTitle())
 						.companyName(job.getCompanyName())
 						.jobLocation(job.getJobLocation())
 						.workMode(job.getWorkMode())
+						.jobType(job.getJobType())
+						.jobDescriptionLink(job.getJobDescriptionLink())
 						.experienceRequired(job.getExperienceRequired())
+						.jobPostedBy(job.getJobPostedBy())
+						.jobPosterName(jobPoster.getName())
+						.postedOn(job.getPostedOn())
 						.requstedOn(referral.getRequstedOn())
 						.currentStatus(referral.getStatus())
 						.reason(referral.getReason())
+						.comments(referral.getComments())
 						.build();
 				appliedReferralStatusDTO.add(appliedReferral);
 			}

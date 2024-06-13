@@ -15,6 +15,9 @@ import com.GuideIn.referral.Referral;
 import com.GuideIn.referral.ReferralRepository;
 import com.GuideIn.referral.ReferralStatus;
 import com.GuideIn.referral.ReferralSubmitDTO;
+import com.GuideIn.subscription.Subscription;
+import com.GuideIn.subscription.SubscriptionRepository;
+import com.GuideIn.subscription.SubscriptionService;
 
 import jakarta.transaction.Transactional;
 
@@ -35,6 +38,9 @@ public class JobPosterService {
 	
 	@Autowired
 	JobSeekerRepo jobSeekerRepo;
+	
+	@Autowired
+	SubscriptionRepository subscriptionRepository;
 	
 	@Transactional
 	public boolean saveProfile(JobPoster jobPoster) {
@@ -135,10 +141,16 @@ public class JobPosterService {
 	public boolean rejectReferral(RejectReferralDTO request) {		
 		try {
 			Referral referral = referralRepo.findById(request.getReferralId()).orElseThrow();
+			Subscription subscription = subscriptionRepository.findByEmailAndActive(referral.getRequestedBy(), true).orElseThrow();
 			referral.setStatus(ReferralStatus.REJECTED);
 			referral.setReason(request.getReason());
 			referral.setComments(request.getComments());
+			
+			subscription.setAvailableReferralCredits(subscription.getAvailableReferralCredits() + 1);
+			
 			referralRepo.save(referral);
+			subscriptionRepository.save(subscription);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
