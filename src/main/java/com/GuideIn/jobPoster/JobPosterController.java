@@ -126,4 +126,9 @@ public class JobPosterController {
 			return ResponseEntity.ok(candidateAndjobDetails);
 		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
 	}
+	
+	@GetMapping("/getDashboardDetails/{email}")
+	public ResponseEntity<DashboardDetails> getDashboardDetails(@PathVariable String email){
+		return ResponseEntity.ok(jobPosterService.getDashboardDetails(email));
+	}
 }

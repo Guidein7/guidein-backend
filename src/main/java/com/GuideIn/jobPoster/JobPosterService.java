@@ -112,7 +112,6 @@ public class JobPosterService {
 			JobSeeker jobSeeker = jobSeekerRepo.findByEmail(referral.getRequestedBy()).orElseThrow();
 			Job job = jobRepo.findById(referral.getJobId()).orElseThrow();
 			
-			
 			candidateAndJobDetailsDTO = CandidateAndJobDetailsDTO.builder()
 					.candidateName(jobSeeker.getName())
 					.candidateEmail(jobSeeker.getEmail())
@@ -128,6 +127,10 @@ public class JobPosterService {
 					.experienceRequired(job.getExperienceRequired())
 					.jobPostedOn(jobService.getTimeAgo(job.getPostedOn()))
 					.referralStatus(referral.getStatus())
+					.dateOfReferral(referral.getDateOfReferral())
+					.methodOfReferral(referral.getMethodOfReferral())
+					.comments(referral.getComments())
+					.proof(referral.getProof())
 					.candidateResume(referral.getCandidateResume())
 					.build();
 		} catch (Exception e) {
@@ -202,6 +205,33 @@ public class JobPosterService {
 			} 
 		}		
 		return referredStatuses;
+	}
+
+	public DashboardDetails getDashboardDetails(String email) {
+		DashboardDetails dashboardDetails = new DashboardDetails();
+		
+		try {
+			Long totalJobPosted = jobRepo.countByJobPostedBy(email);
+			Long activeJobs = jobRepo.countByJobPostedByAndEnabled(email, true);
+			Long jobsExpired = jobRepo.countByJobPostedByAndEnabled(email, false);
+			Long totalReferralRequests = referralRepo.countByJobPostedByAndStatus(email, ReferralStatus.REQUESTED);
+			Long referralsSuccessful = referralRepo.countByJobPostedByAndStatus(email, ReferralStatus.REFERRED);
+			Long referralsRejected = referralRepo.countByJobPostedByAndStatus(email, ReferralStatus.VERIFICATION_FAILED)
+					+ referralRepo.countByRequestedByAndStatus(email, ReferralStatus.REJECTED);
+			
+			dashboardDetails.setTotalJobPosted(totalJobPosted);
+			dashboardDetails.setActiveJobs(activeJobs);
+			dashboardDetails.setJobsExpired(jobsExpired);
+			dashboardDetails.setTotalReferralRequests(totalReferralRequests);
+			dashboardDetails.setReferralSuccessful(referralsSuccessful);
+			dashboardDetails.setReferralRejected(referralsRejected);
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return dashboardDetails;
+		}
+		return dashboardDetails;
 	}
 	
 	

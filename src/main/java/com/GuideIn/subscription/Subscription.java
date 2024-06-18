@@ -1,6 +1,6 @@
 package com.GuideIn.subscription;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -50,6 +50,6 @@ public class Subscription {
 	
 	@PrePersist
 	protected void onCreate() {
-		subscribedOn = LocalDateTime.now().withNano(0).toString();
+		subscribedOn = LocalDate.now().toString();
 	}
 }

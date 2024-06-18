@@ -18,7 +18,6 @@ import com.GuideIn.referral.ReferralRequestDTO;
 import com.GuideIn.referral.ReferralStatus;
 import com.GuideIn.subscription.Subscription;
 import com.GuideIn.subscription.SubscriptionRepository;
-import com.GuideIn.subscription.SubscriptionService;
 
 import jakarta.transaction.Transactional;
 
@@ -201,35 +200,113 @@ public class JobSeekerService {
 			List<Referral> referrals = referralRepo.findAllByRequestedBy(email);		
 			for(Referral referral : referrals) {
 				Job job = jobRepo.findById(referral.getJobId()).orElseThrow();
-				JobPoster jobPoster = jobPosterRepo.findByEmail(job.getJobPostedBy()).orElseThrow();
 				if(referral.getStatus() == ReferralStatus.IN_VERIFICATION)
 					referral.setStatus(ReferralStatus.IN_PROGRESS);
 				if(referral.getStatus() == ReferralStatus.VERIFICATION_FAILED)
 					referral.setStatus(ReferralStatus.REJECTED);
-				AppliedReferralStatusDTO appliedReferral = AppliedReferralStatusDTO.builder()
+				AppliedReferralStatusDTO appliedReferrals = AppliedReferralStatusDTO.builder()
 						.referralId(referral.getReferralId())
+						.jobId(referral.getJobId())
 						.jobTitle(job.getJobTitle())
 						.companyName(job.getCompanyName())
 						.jobLocation(job.getJobLocation())
 						.workMode(job.getWorkMode())
 						.jobType(job.getJobType())
-						.jobDescriptionLink(job.getJobDescriptionLink())
 						.experienceRequired(job.getExperienceRequired())
-						.jobPostedBy(job.getJobPostedBy())
-						.jobPosterName(jobPoster.getName())
-						.postedOn(job.getPostedOn())
 						.requstedOn(referral.getRequstedOn())
 						.currentStatus(referral.getStatus())
 						.reason(referral.getReason())
-						.comments(referral.getComments())
 						.build();
-				appliedReferralStatusDTO.add(appliedReferral);
+				appliedReferralStatusDTO.add(appliedReferrals);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return appliedReferralStatusDTO;
 		}	
 		return appliedReferralStatusDTO;	
+	}
+
+	public AppliedReferralDTO getAppliedReferral(Long referralId) {
+		AppliedReferralDTO appliedReferralDTO = null;
+		
+		try {
+			Referral referral = referralRepo.findById(referralId).orElseThrow();
+			Job job = jobRepo.findById(referral.getJobId()).orElseThrow();
+			JobPoster jobPoster = jobPosterRepo.findByEmail(referral.getJobPostedBy()).orElseThrow();
+			
+			if(referral.getStatus() == ReferralStatus.IN_VERIFICATION)
+				referral.setStatus(ReferralStatus.IN_PROGRESS);
+			if(referral.getStatus() == ReferralStatus.VERIFICATION_FAILED)
+				referral.setStatus(ReferralStatus.REJECTED);
+			
+			appliedReferralDTO = AppliedReferralDTO.builder()
+					.referralId(referralId)
+					.jobId(job.getJobId())
+					.jobTitle(job.getJobTitle())
+					.companyName(job.getCompanyName())
+					.jobLocation(job.getJobLocation())
+					.workMode(job.getWorkMode())
+					.jobType(job.getJobType())
+					.jobDescriptionLink(job.getJobDescriptionLink())
+					.experienceRequired(job.getExperienceRequired())
+					.jobPostedBy(job.getJobPostedBy())
+					.jobPosterName(jobPoster.getName())
+					.postedOn(jobService.getTimeAgo(job.getPostedOn()))
+					.requstedOn(referral.getRequstedOn())
+					.currentStatus(referral.getStatus())
+					.reason(referral.getReason())
+					.dateOfReferral(referral.getDateOfReferral())
+					.methodOfReferral(referral.getMethodOfReferral())
+					.comments(referral.getComments())
+					.resume(referral.getCandidateResume())
+					.proof(referral.getProof())
+					.build();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return appliedReferralDTO;
+		}	
+		return appliedReferralDTO;
+	}
+
+	public DashboardDTO getDashboardDetails(String email) {
+		DashboardDTO dashboardDTO = new DashboardDTO();
+		List<PlanDetails> planDetails = new ArrayList<>();
+		dashboardDTO.setPlanHistory(planDetails);
+		
+		try {
+			Long countOfRequested = referralRepo.countByRequestedByAndStatus(email, ReferralStatus.REQUESTED);
+			Long countOfInProgress = referralRepo.countByRequestedByAndStatus(email, ReferralStatus.IN_VERIFICATION);
+			List<Subscription> subscriptionsHistory = subscriptionRepo.findByEmail(email);
+			
+			for(Subscription subs : subscriptionsHistory) {		
+				PlanDetails plan = PlanDetails.builder()
+						.plan(subs.getPlan())
+						.subscrideOn(subs.getSubscribedOn())
+						.transactionId(subs.getPaymentId())
+						.isActive(subs.getActive())
+						.build();
+				planDetails.add(plan);
+			}
+			
+			dashboardDTO.setPlanHistory(planDetails);
+			
+			Subscription subscription = subscriptionRepo.findByEmailAndActive(email, true).orElse(null);
+			
+			if(subscription != null) {
+				dashboardDTO.setTotalReferrals(subscription.getTotalReferralCredits());
+				dashboardDTO.setAvailableReferrals(subscription.getAvailableReferralCredits());
+				dashboardDTO.setReferralsRequested(countOfRequested.intValue());
+				dashboardDTO.setReferralsInProgress(countOfInProgress.intValue());
+				dashboardDTO.setReferralsSucessful(subscription.getUsedReferralCredits());
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return dashboardDTO;
+		}
+		
+		return dashboardDTO;
 	}
 	
 }

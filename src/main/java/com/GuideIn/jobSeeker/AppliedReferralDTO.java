@@ -11,7 +11,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AppliedReferralStatusDTO {
+public class AppliedReferralDTO {
+	
 	private Long referralId;
 	private Long jobId;
 	private String jobTitle;
@@ -19,8 +20,18 @@ public class AppliedReferralStatusDTO {
 	private String jobLocation;
 	private String workMode;
 	private String jobType;
+	private String jobDescriptionLink;
 	private String experienceRequired;
+	private String jobPostedBy;
+	private String jobPosterName;
+	private String postedOn;
 	private String requstedOn;
 	private ReferralStatus currentStatus;
 	private String reason;
+	private String dateOfReferral;
+	private String methodOfReferral;
+	private String comments;
+	private byte[] resume;
+	private byte[] proof;
+	
 }

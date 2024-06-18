@@ -106,6 +106,14 @@ public class JobSeekerController {
 		
 	}
 	
+	@GetMapping("/getAppliedReferral/{referralId}")
+	public ResponseEntity<AppliedReferralDTO> getAppliedReferral(@PathVariable Long referralId){
+		AppliedReferralDTO response = jobSeekerService.getAppliedReferral(referralId);
+		if(response != null)
+			return ResponseEntity.ok(response);
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+	}
+	
 	@PostMapping("/subscribe")
 	public ResponseEntity<SubscritionResponse> subscribe(@RequestBody SubscriptionRequest request){
 		SubscritionResponse response = subscriptionService.subscribe(request);
@@ -128,6 +136,11 @@ public class JobSeekerController {
 		if(subscriptionService.checkActiveSubscription(email))
 			return ResponseEntity.ok("you currently have an active subscription");
 		else return new ResponseEntity<>("you currently dont have an active subscription",HttpStatus.NO_CONTENT);
+	}
+	
+	@GetMapping("/getDashboardDetails/{email}")
+	public ResponseEntity<DashboardDTO> getDashboardDetails(@PathVariable String email){
+		return ResponseEntity.ok(jobSeekerService.getDashboardDetails(email));
 	}
 	
 }

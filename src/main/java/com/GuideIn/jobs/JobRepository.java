@@ -12,5 +12,7 @@ public interface JobRepository extends JpaRepository<Job, Long> {
 	List<Job> findByEnabled(boolean check);
 	Optional<Job> findByJobId(Long jobId);
 	Optional<Job> findByJobIdAndEnabled(Long jobId, boolean check);
+	Long countByJobPostedBy(String jobPostedBy);
+	Long countByJobPostedByAndEnabled(String jobPostedBy, boolean enabled);
 }
 

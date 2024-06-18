@@ -30,6 +30,10 @@ public class CandidateAndJobDetailsDTO {
 	private String experienceRequired;
 	private String jobPostedOn;
 	private ReferralStatus referralStatus;
+	private String dateOfReferral;
+	private String methodOfReferral;
+	private String comments;
+	private byte[] proof;
 	private byte[] candidateResume;
 	
 }
