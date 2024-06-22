@@ -31,8 +31,8 @@ public class ApplicationConfig {
 	    return new UserDetailsService() {
 			
 			@Override
-			public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-				String userDetails[] = username.split(","); //userEmai and userRole
+			public UserDetails loadUserByUsername(String usernameWithRole) throws UsernameNotFoundException {
+				String userDetails[] = usernameWithRole.split(","); //userEmail and userRole
 				User user = repository.findByEmailAndRole(userDetails[0],Role.valueOf(userDetails[1]))
 				        .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 				return user;

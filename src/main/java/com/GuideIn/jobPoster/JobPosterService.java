@@ -18,6 +18,11 @@ import com.GuideIn.referral.ReferralSubmitDTO;
 import com.GuideIn.subscription.Subscription;
 import com.GuideIn.subscription.SubscriptionRepository;
 import com.GuideIn.subscription.SubscriptionService;
+import com.GuideIn.wallet.Wallet;
+import com.GuideIn.wallet.WalletDTO;
+import com.GuideIn.wallet.WalletRepository;
+import com.GuideIn.wallet.WalletTransactionDetail;
+import com.GuideIn.wallet.WalletTransactionDetailRepo;
 
 import jakarta.transaction.Transactional;
 
@@ -42,10 +47,22 @@ public class JobPosterService {
 	@Autowired
 	SubscriptionRepository subscriptionRepository;
 	
+	@Autowired
+	WalletRepository walletRepo;
+	
+	@Autowired
+	WalletTransactionDetailRepo walletTransactionDetailRepo;
+	
 	@Transactional
 	public boolean saveProfile(JobPoster jobPoster) {
 		try {
+			var wallet = Wallet.builder()
+					.email(jobPoster.getEmail())
+					.build();
+			walletRepo.save(wallet);
+			
 			repo.save(jobPoster);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
@@ -232,6 +249,42 @@ public class JobPosterService {
 			return dashboardDetails;
 		}
 		return dashboardDetails;
+	}
+	
+	public WalletDTO getWalletDetails(String email) {
+		WalletDTO walletDTO = null;
+		try {
+			Wallet wallet = walletRepo.findByEmail(email).orElseThrow();
+			List<WalletTransactionDetail> transactions = walletTransactionDetailRepo.findByEmail(wallet.getEmail());
+				
+			walletDTO = WalletDTO.builder()
+					.email(wallet.getEmail())
+					.totalReferrals(wallet.getTotalReferrals())
+					.totalEarned(wallet.getTotalEarned())
+					.amountWithdrawn(wallet.getAmountWithdrawn())
+					.withdrawInProgress(wallet.getWithdrawInProgress())
+					.currentBalance(wallet.getCurrentBalance())
+					.upiId(wallet.getUpiId())
+					.transactionHistory(transactions)
+					.build();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return walletDTO;
+		}
+		return walletDTO;
+	}
+	
+	@Transactional
+	public boolean saveUpiId(UpiIdDTO request) {
+		try {
+			Wallet wallet = walletRepo.findByEmail(request.getEmail()).orElseThrow();
+			wallet.setUpiId(request.getUpiId());
+			walletRepo.save(wallet);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
 	}
 	
 	

@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.GuideIn.config.JwtService;
+import com.GuideIn.user.Role;
 import com.GuideIn.user.User;
 import com.GuideIn.user.UserRepository;
 
@@ -32,16 +33,22 @@ public class AuthenticationService {
 	  public boolean register(RegisterRequest request) throws DataAccessException {
 		if(repository.findByEmailAndRole(request.getEmail(),request.getRole()).isEmpty() && 
 				repository.findByMobileAndRole(request.getMobile(), request.getRole()).isEmpty()) {
+			
+			Boolean verified = false;
+			if(request.getRole() == Role.ADMIN)
+				verified = true;
+			
 			var user = User.builder()
 			        .username(request.getUsername())
 			        .email(request.getEmail())
 			        .mobile(request.getMobile())
 			        .password(passwordEncoder.encode(request.getPassword()))
 			        .role(request.getRole())
-			        .verified(false)
+			        .verified(verified)
 			        .build();
 			repository.save(user);
-			otpService.sendOTP(user.getEmail(), user.getMobile());
+			if(user.getRole() != Role.ADMIN)
+				otpService.sendOTP(user.getEmail(), user.getMobile());
 			return true;
 		}
 		else return false; 
@@ -66,7 +73,7 @@ public class AuthenticationService {
 	
 	    authenticationManager.authenticate(
 		        new UsernamePasswordAuthenticationToken(
-		            user.getEmail() +","+ request.getRole(),//because loadByUserName only has userEmai parameter
+		            user.getEmail() +","+ request.getRole(),//because loadByUserName only has userEmail parameter
 		            request.getPassword()
 		        )
 		    );

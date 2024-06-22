@@ -20,6 +20,8 @@ import com.GuideIn.jobs.Job;
 import com.GuideIn.jobs.JobService;
 import com.GuideIn.jobs.JobUpdateRequest;
 import com.GuideIn.referral.ReferralSubmitDTO;
+import com.GuideIn.wallet.Wallet;
+import com.GuideIn.wallet.WalletDTO;
 
 @RestController
 @RequestMapping("/api/guidein/v1/job_poster")
@@ -130,5 +132,20 @@ public class JobPosterController {
 	@GetMapping("/getDashboardDetails/{email}")
 	public ResponseEntity<DashboardDetails> getDashboardDetails(@PathVariable String email){
 		return ResponseEntity.ok(jobPosterService.getDashboardDetails(email));
+	}
+	
+	@GetMapping("/getWalletDetails/{email}")
+	public ResponseEntity<WalletDTO> getWalletDetails(@PathVariable String email){
+		WalletDTO wallet = jobPosterService.getWalletDetails(email);
+		if(wallet != null)
+			return ResponseEntity.ok(wallet);
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+	}
+	
+	@PostMapping("/saveAndUpdateUpiId")
+	public ResponseEntity<String> saveUpiId(@RequestBody UpiIdDTO request){
+		if(jobPosterService.saveUpiId(request))
+			return ResponseEntity.ok("upiId saved successfully");
+		return new ResponseEntity<>("unable to save upiId",HttpStatus.FORBIDDEN);
 	}
 }

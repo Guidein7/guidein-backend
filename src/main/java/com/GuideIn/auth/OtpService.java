@@ -46,17 +46,17 @@ public class OtpService {
 
 	public boolean sendOTP(OtpRequest request) { 
 		
-//		User user = null;
-//		 
-//		try {
-//			if(request.getEmail().isEmpty())
-//				user = repo.findByMobileAndRole(request.getMobile(), request.getRole()).orElseThrow(); 
-//			else
-//				user = repo.findByEmailAndRole(request.getEmail(), request.getRole()).orElseThrow();
-//		 }		 
-//		catch (Exception e) {
-//			return false;
-//		}
+		User user = null;
+		 
+		try {
+			if(request.getEmail().isEmpty())
+				user = repo.findByMobileAndRole(request.getMobile(), request.getRole()).orElseThrow(); 
+			else
+				user = repo.findByEmailAndRole(request.getEmail(), request.getRole()).orElseThrow();
+		 }		 
+		catch (Exception e) {
+			return false;
+		}
 //		
 //		Twilio.init(config.getAccountSid(), config.getAuthToken());
 //		
@@ -70,7 +70,6 @@ public class OtpService {
 //			e.printStackTrace();
 //			return false;
 //		}
-		
 		return true;	
 	}
 	
@@ -86,25 +85,26 @@ public class OtpService {
 //			        .setTo(request.getMobile())
 //			        .setCode(request.getOtp())
 //			        .create();
+//			
+//			if(verificationCheck.getStatus().equals("approved")) {
+//		    	User user = repo.findByEmailAndRole(request.getEmail(), request.getRole()).orElseThrow();
+//		    	user.setVerified(true);
+//		    	repo.save(user);
+//		    	return true;
+//		    }
+//		    
+//		    else {
+//		    	return false;
+//		    }		
+//			
 //		} catch (ApiException e) {
-//			e.printStackTrace();
-//			User user = repo.findByEmailAndRole(request.getEmail(), request.getRole()).orElse(null);
-//			if(!user.getVerified())
-//				repo.deleteByEmailAndRole(request.getEmail(),request.getRole());
+//			e.printStackTrace();	
 //			return false;
-//		}
-//	    
-//	    if(verificationCheck.getStatus().equals("approved")) {
-//	    	User user = repo.findByEmailAndRole(request.getEmail(), request.getRole()).orElse(null);
-//	    	user.setVerified(true);
-//	    	repo.save(user);
-//	    	return true;
-//	    }
-//	    
-//	    else 
-//	    	return false;
-	    
+//		} 	
+
 	 	User user = repo.findByEmailAndRole(request.getEmail(), request.getRole()).orElse(null);
+	 	if(user == null)
+	 		user = repo.findByMobileAndRole(request.getMobile(), request.getRole()).orElse(null);
     	user.setVerified(true);
     	repo.save(user);
     	return true;
