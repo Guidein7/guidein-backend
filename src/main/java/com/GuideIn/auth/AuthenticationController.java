@@ -26,7 +26,7 @@ public class AuthenticationController {
 		  
 		if(service.register(request))
 			return new ResponseEntity<>("User registered successfully", HttpStatus.CREATED);
-		else
+		else 
 			return new ResponseEntity<>("User already registered", HttpStatus.CONFLICT);
 	  }
 	  
@@ -43,8 +43,7 @@ public class AuthenticationController {
 	  @PostMapping("/register/sendotp")
 	  public ResponseEntity<String> sendOTP(@RequestBody OtpRequest request){
 		  if(otpService.sendOTP(request))
-			  return ResponseEntity.ok("OTP sent successfully");
-		  
+			  return ResponseEntity.ok("OTP sent successfully");  
 		  else 
 			  return new ResponseEntity<>("unable to send OTP", HttpStatus.FORBIDDEN);	
 	  }

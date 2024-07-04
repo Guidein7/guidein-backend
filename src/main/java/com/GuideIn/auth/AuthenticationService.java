@@ -31,6 +31,7 @@ public class AuthenticationService {
 	  
 	  @Transactional
 	  public boolean register(RegisterRequest request) throws DataAccessException {
+		  
 		if(repository.findByEmailAndRole(request.getEmail(),request.getRole()).isEmpty() && 
 				repository.findByMobileAndRole(request.getMobile(), request.getRole()).isEmpty()) {
 			

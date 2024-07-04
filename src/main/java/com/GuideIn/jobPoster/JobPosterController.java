@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -147,5 +148,12 @@ public class JobPosterController {
 		if(jobPosterService.saveUpiId(request))
 			return ResponseEntity.ok("upiId saved successfully");
 		return new ResponseEntity<>("unable to save upiId",HttpStatus.FORBIDDEN);
+	}
+	
+	@PutMapping("/requestWithdraw/{email}")
+	public ResponseEntity<String> requestWithdraw(@PathVariable String email){
+		if(jobPosterService.requestWithdraw(email))
+			return ResponseEntity.ok("Withdraw request was successful");
+		return new ResponseEntity<String>("Unable to request for withdraw",HttpStatus.FORBIDDEN);
 	}
 }

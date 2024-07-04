@@ -53,5 +53,4 @@ public class Referral {
 	protected void onCreate() {
 		requstedOn = LocalDate.now().toString();
 	}
-	
 }

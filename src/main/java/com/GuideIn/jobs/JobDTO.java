@@ -25,4 +25,7 @@ public class JobDTO {
 	String jobPosterName;
 	String postedOn;
 	ReferralStatus status;
+	Boolean enabled;
+	Boolean disabledByAdmin;
+	Boolean saved;
 }

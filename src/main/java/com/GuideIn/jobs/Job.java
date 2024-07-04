@@ -37,6 +37,7 @@ public class Job {
 	@Column(nullable = false)
 	String postedOn;
 	boolean enabled;
+	boolean disabledByAdmin;
 	
 	@PrePersist
 	protected void onCreate() {

@@ -287,5 +287,22 @@ public class JobPosterService {
 		return true;
 	}
 	
+	@Transactional
+	public boolean requestWithdraw(String email) {
+		try {
+			Wallet wallet = walletRepo.findByEmail(email).orElseThrow();
+			if(wallet.getWithdrawInProgress() > 0)
+				return false;
+			
+			wallet.setWithdrawInProgress(wallet.getCurrentBalance());
+			wallet.setCurrentBalance(wallet.getCurrentBalance() - wallet.getCurrentBalance());
+			walletRepo.save(wallet);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	
 	
 }

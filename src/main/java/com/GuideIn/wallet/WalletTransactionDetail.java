@@ -24,6 +24,7 @@ public class WalletTransactionDetail {
 	private Long id;
 	private String email;
 	private int amount;
+	private String transactionId;
 	private String transactionOn;
 	
 	@PrePersist

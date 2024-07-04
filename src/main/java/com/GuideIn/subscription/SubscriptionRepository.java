@@ -11,5 +11,7 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Long
 	
 	Optional<Subscription> findByEmailAndActive(String email, Boolean active);
     List<Subscription> findByEmail(String email);
+    List<Subscription> findByActive(Boolean active);
+    long countByActive(Boolean active);
 	
 }

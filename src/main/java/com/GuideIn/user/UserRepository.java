@@ -1,10 +1,11 @@
 package com.GuideIn.user;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
+import com.GuideIn.user.Role;
 
 
 @Repository
@@ -14,5 +15,8 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 	Optional<User> findByEmailAndRole(String email, Role role);
 	Optional<User> findByMobileAndRole(String mobile, Role role);
 	void deleteByEmailAndRole(String email, Role role);
+	
+	List<User> findByRole(Role role);
+	long countByRole(Role role);
 	  
 }

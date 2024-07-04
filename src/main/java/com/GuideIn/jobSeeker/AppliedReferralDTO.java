@@ -14,6 +14,10 @@ import lombok.NoArgsConstructor;
 public class AppliedReferralDTO {
 	
 	private Long referralId;
+	private String candidateName;
+	private String candidateEmail;
+	private String candidateMobile;
+	private String candidateExperience;
 	private Long jobId;
 	private String jobTitle;
 	private String companyName;

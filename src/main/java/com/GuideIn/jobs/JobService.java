@@ -107,6 +107,7 @@ public class JobService {
 		for(Job job : jobs) {
 			String jobPosterName;
 			ReferralStatus status = ReferralStatus.UN_REQUESTED;
+			Boolean isSaved = false;
 			try {
 				JobPoster jobPoster = jobPosterRepo.findByEmail(job.getJobPostedBy()).orElseThrow();
 				jobPosterName = jobPoster.getName();
@@ -131,6 +132,7 @@ public class JobService {
 					.jobPosterName(jobPosterName)
 					.postedOn(getTimeAgo(job.getPostedOn()))
 					.status(status)
+					.enabled(job.isEnabled())
 					.build();
 			listOfJobDTO.add(jobDTO);
 		}
