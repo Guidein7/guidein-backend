@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import com.GuideIn.jobPoster.JobPoster;
 import com.GuideIn.jobPoster.JobPosterRepo;
 import com.GuideIn.jobSeeker.JobSeeker;
+import com.GuideIn.jobSeeker.SavedJob;
+import com.GuideIn.jobSeeker.SavedJobRepo;
 import com.GuideIn.referral.Referral;
 import com.GuideIn.referral.ReferralRepository;
 import com.GuideIn.referral.ReferralRequestDTO;
@@ -31,6 +33,9 @@ public class JobService {
 	
 	@Autowired
 	JobPosterRepo jobPosterRepo;
+	
+	@Autowired
+	SavedJobRepo savedJobRepo;
 	
 	@Transactional
 	public boolean saveJob(Job job) {	
@@ -111,6 +116,7 @@ public class JobService {
 			try {
 				JobPoster jobPoster = jobPosterRepo.findByEmail(job.getJobPostedBy()).orElseThrow();
 				jobPosterName = jobPoster.getName();
+				isSaved = savedJobRepo.findByEmailAndJobId(email, job.getJobId()).isPresent();
 			} catch (Exception e) {
 				e.printStackTrace();
 				return listOfJobDTO;
@@ -132,6 +138,7 @@ public class JobService {
 					.jobPosterName(jobPosterName)
 					.postedOn(getTimeAgo(job.getPostedOn()))
 					.status(status)
+					.saved(isSaved)
 					.enabled(job.isEnabled())
 					.build();
 			listOfJobDTO.add(jobDTO);
