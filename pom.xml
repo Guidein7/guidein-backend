@@ -112,6 +112,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		<finalName>guidein-backend-image</finalName>
 	</build>
 
 </project>
