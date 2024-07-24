@@ -234,7 +234,7 @@ public class JobPosterService {
 			Long totalReferralRequests = referralRepo.countByJobPostedByAndStatus(email, ReferralStatus.REQUESTED);
 			Long referralsSuccessful = referralRepo.countByJobPostedByAndStatus(email, ReferralStatus.REFERRED);
 			Long referralsRejected = referralRepo.countByJobPostedByAndStatus(email, ReferralStatus.VERIFICATION_FAILED)
-					+ referralRepo.countByRequestedByAndStatus(email, ReferralStatus.REJECTED);
+					+ referralRepo.countByJobPostedByAndStatus(email, ReferralStatus.REJECTED);
 			
 			dashboardDetails.setTotalJobPosted(totalJobPosted);
 			dashboardDetails.setActiveJobs(activeJobs);
@@ -242,7 +242,6 @@ public class JobPosterService {
 			dashboardDetails.setTotalReferralRequests(totalReferralRequests);
 			dashboardDetails.setReferralSuccessful(referralsSuccessful);
 			dashboardDetails.setReferralRejected(referralsRejected);
-			
 			
 		} catch (Exception e) {
 			e.printStackTrace();

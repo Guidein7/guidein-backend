@@ -1,4 +1,4 @@
-package com.GuideIn.twilio;
+package com.GuideIn.plivo;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -8,14 +8,12 @@ import lombok.Data;
 
 @Configuration
 @Component
-@ConfigurationProperties(prefix = "twilio")
 @Data
-public class TwilioConfig {
+@ConfigurationProperties(prefix = "plivo")
+public class PlivoConfig {
 	
-	private String accountSid;
+	private String authId;
 	private String authToken;
-	private String phoneNumber;
-	private String serviceSid;
-	
+	private String verifyAppUuid;
 
 }

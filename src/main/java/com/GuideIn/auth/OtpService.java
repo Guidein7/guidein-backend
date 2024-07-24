@@ -4,14 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
-import com.GuideIn.twilio.TwilioConfig;
-import com.GuideIn.user.Role;
+import com.GuideIn.plivo.PlivoConfig;
 import com.GuideIn.user.User;
 import com.GuideIn.user.UserRepository;
-import com.twilio.Twilio;
-import com.twilio.exception.ApiException;
-import com.twilio.rest.verify.v2.service.Verification;
-import com.twilio.rest.verify.v2.service.VerificationCheck;
+import com.plivo.api.Plivo;
+import com.plivo.api.models.verify_session.SessionCreateResponse;
+import com.plivo.api.models.verify_session.VerifySession;
 
 import jakarta.transaction.Transactional;
 
@@ -22,28 +20,15 @@ public class OtpService {
 	private UserRepository repo;
 	
 	@Autowired
-	private TwilioConfig config;
+	private PlivoConfig config;
 	
-	
+	////// TEST //////
 	public boolean sendOTP(String email, String mobile) {
-		
-//		Twilio.init(config.getAccountSid(), config.getAuthToken());
-//		
-//		try {
-//			Verification verification = Verification.creator(
-//			        config.getServiceSid(),
-//			        mobile,
-//			        "sms")
-//			    .create();
-//		} catch (ApiException e) {
-//			e.printStackTrace();
-//			return false;
-//		}
 		
 		return true;
 		
 	}
-
+	
 	public boolean sendOTP(OtpRequest request) { 
 		
 		User user = null;
@@ -57,50 +42,11 @@ public class OtpService {
 		catch (Exception e) {
 			return false;
 		}
-//		
-//		Twilio.init(config.getAccountSid(), config.getAuthToken());
-//		
-//		try {
-//			Verification verification = Verification.creator(
-//			        config.getServiceSid(),
-//			        user.getMobile(),
-//			        "sms")
-//			    .create();
-//		} catch (ApiException e) {
-//			e.printStackTrace();
-//			return false;
-//		}
 		return true;	
 	}
 	
 	@Transactional
-	public boolean validateOTP(OtpValidateRequest request) throws DataAccessException {
-		
-//		Twilio.init(config.getAccountSid(), config.getAuthToken());
-//
-//	    VerificationCheck verificationCheck = null;
-//		try {
-//			verificationCheck = VerificationCheck.creator(
-//			        config.getServiceSid())
-//			        .setTo(request.getMobile())
-//			        .setCode(request.getOtp())
-//			        .create();
-//			
-//			if(verificationCheck.getStatus().equals("approved")) {
-//		    	User user = repo.findByEmailAndRole(request.getEmail(), request.getRole()).orElseThrow();
-//		    	user.setVerified(true);
-//		    	repo.save(user);
-//		    	return true;
-//		    }
-//		    
-//		    else {
-//		    	return false;
-//		    }		
-//			
-//		} catch (ApiException e) {
-//			e.printStackTrace();	
-//			return false;
-//		} 	
+	public boolean validateOTP(OtpValidateRequest request) throws DataAccessException {	
 
 	 	User user = repo.findByEmailAndRole(request.getEmail(), request.getRole()).orElse(null);
 	 	if(user == null)
@@ -110,6 +56,94 @@ public class OtpService {
     	return true;
 
 	}
+	
+	/////// TEST /////////
+	
+//	public RegisterResponse sendOTP(String email, String mobile) {
+//		
+//		RegisterResponse response = null;
+//		
+//		Plivo.init(config.getAuthId(), config.getAuthToken());
+//		
+//        try {
+//        	SessionCreateResponse sessionResponse = VerifySession.creator(
+//                    config.getVerifyAppUuid(), 
+//                    mobile, "sms", "", "POST") 
+//                    .create();
+//        
+//            response = RegisterResponse.builder()
+//            		.mobile(mobile)
+//            		.sessionUUID(sessionResponse.getSessionUuid())
+//            		.build();
+//        }
+//        catch (Exception e) {
+//            e.printStackTrace();
+//            response = RegisterResponse.builder()
+//            		.mobile(mobile)
+//            		.sessionUUID("Unable to send OTP")
+//            		.build();
+//            return response;
+//        }		
+//		return response;	
+//	}
+//	
+//
+//	public RegisterResponse sendOTP(OtpRequest request) { 	
+//		
+//		RegisterResponse response = null;
+//		User user = null;
+//		
+//		Plivo.init(config.getAuthId(), config.getAuthToken());
+//		
+//		try {
+//			if(request.getEmail().isEmpty())
+//				user = repo.findByMobileAndRole(request.getMobile(), request.getRole()).orElseThrow(); 
+//			else
+//				user = repo.findByEmailAndRole(request.getEmail(), request.getRole()).orElseThrow();
+//			
+//			SessionCreateResponse sessionResponse = VerifySession.creator(
+//                    config.getVerifyAppUuid(), 
+//                    user.getMobile(), "sms", "", "POST") 
+//                    .create();
+//        
+//            response = RegisterResponse.builder()
+//            		.mobile(user.getMobile())
+//            		.sessionUUID(sessionResponse.getSessionUuid())
+//            		.build();
+//            return response;
+//		 }		 
+//		catch (Exception e) {
+//			return response;
+//		}	
+//	}
+//	
+//	@Transactional
+//	public boolean validateOTP(OtpValidateRequest request) throws DataAccessException {
+//	
+//		Plivo.init(config.getAuthId(), config.getAuthToken());
+//		
+//		try{
+//			SessionCreateResponse response = VerifySession.validation(
+//					request.getSessionUUID(), request.getOtp()) // Validation
+//					.create();
+//				
+//			if(response.getMessage().equals("session validated successfully")) {
+//				User user = repo.findByEmailAndRole(request.getEmail(), request.getRole()).orElse(null);
+//				if(user == null)
+//					user = repo.findByMobileAndRole(request.getMobile(), request.getRole()).orElseThrow();
+//				user.setVerified(true);
+//				repo.save(user);
+//				return true;
+//			}
+//			else
+//				return false;
+//		}
+//		catch (Exception e)
+//		{
+//			e.printStackTrace();
+//		    return false;
+//		} 	
+//	}
 
 	
 }

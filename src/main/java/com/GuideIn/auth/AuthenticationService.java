@@ -29,6 +29,7 @@ public class AuthenticationService {
 	  @Autowired
 	  private final OtpService otpService;
 	  
+	  ///// TEST /////
 	  @Transactional
 	  public boolean register(RegisterRequest request) throws DataAccessException {
 		  
@@ -54,6 +55,47 @@ public class AuthenticationService {
 		}
 		else return false; 
 	  }
+	  
+	  //////// TEST /////////
+	  
+	  
+//	  @Transactional
+//	  public RegisterResponse register(RegisterRequest request) throws DataAccessException {
+//		  
+//		RegisterResponse response = null;
+//		  
+//		if(repository.findByEmailAndRole(request.getEmail(),request.getRole()).isEmpty() && 
+//				repository.findByMobileAndRole(request.getMobile(), request.getRole()).isEmpty()) {
+//			
+//			Boolean verified = false;
+//			if(request.getRole() == Role.ADMIN)
+//				verified = true;
+//			
+//			var user = User.builder()
+//			        .username(request.getUsername())
+//			        .email(request.getEmail())
+//			        .mobile(request.getMobile())
+//			        .password(passwordEncoder.encode(request.getPassword()))
+//			        .role(request.getRole())
+//			        .verified(verified)
+//			        .build();
+//			
+//			response = RegisterResponse.builder()
+//					.mobile(user.getMobile())
+//					.sessionUUID("Admin no OTP")
+//					.build();
+//			
+//			if(user.getRole() != Role.ADMIN)
+//				response = otpService.sendOTP(user.getEmail(), user.getMobile());
+//			if(response.getSessionUUID() != "Unable to send OTP") //only save user after successful sending of OTP 
+//				repository.save(user);
+//			
+//			return response;
+//		}
+//		else {
+//			return response; 
+//		}
+//	  }
 	  
 	  @Transactional
 	  public AuthenticationResponse authenticate(AuthenticationRequest request) throws DataAccessException{

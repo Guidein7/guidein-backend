@@ -1,20 +1,17 @@
 package com.GuideIn.auth;
 
-import com.GuideIn.user.Role;
-
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class OtpValidateRequest {
+public class RegisterResponse {
 	
-	private String email;
 	private String mobile;
-	private Role role;
-	private String sessionUUID;   //// in plivo
-	private String otp;
+	private String sessionUUID;
 
 }

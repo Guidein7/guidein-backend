@@ -122,8 +122,14 @@ public class JobService {
 				return listOfJobDTO;
 			}
 			Referral referral =  referralRepo.findByRequestedByAndJobId(email, job.getJobId()).orElse(null);
-			if(referral != null)
-				status = referral.getStatus();
+			if(referral != null) {
+				if(referral.getStatus() == ReferralStatus.VERIFICATION_FAILED)
+					status = ReferralStatus.REJECTED;
+				if(referral.getStatus() == ReferralStatus.IN_VERIFICATION)
+					status = ReferralStatus.IN_PROGRESS;
+				else
+					status = referral.getStatus();
+			}
 			var jobDTO = JobDTO.builder()
 					.jobId(job.getJobId())
 					.jobTitle(job.getJobTitle())

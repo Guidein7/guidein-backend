@@ -26,7 +26,9 @@ public class AuthenticationController {
 	  public ResponseEntity<String> greet(){
 		  return ResponseEntity.ok("hi its running......");
 	  }
-
+	  
+	  ////// TEST /////////
+	  
 	  @PostMapping("/register")
 	  public ResponseEntity<String> register(@RequestBody RegisterRequest request) { 
 		  
@@ -53,6 +55,37 @@ public class AuthenticationController {
 		  else 
 			  return new ResponseEntity<>("unable to send OTP", HttpStatus.FORBIDDEN);	
 	  }
+	  
+	  ///////// TEST /////////
+
+//	  @PostMapping("/register")
+//	  public ResponseEntity<RegisterResponse> register(@RequestBody RegisterRequest request) { 
+//		RegisterResponse response = service.register(request);
+//		if(response == null)
+//			return new ResponseEntity<>(response,HttpStatus.CONFLICT); //already registered 
+//		else if(response.getSessionUUID().equals("Unable to send OTP"))
+//			return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+//		else 
+//			return new ResponseEntity<>(response, HttpStatus.CREATED);		
+//	  }
+//	  
+//	  @PostMapping("/register/otpvalidate")
+//	  public ResponseEntity<String> validateOTP(@RequestBody OtpValidateRequest request){
+//		  
+//		  if(otpService.validateOTP(request))
+//			  return ResponseEntity.ok("OTP validated successfully");
+//		  else
+//			  return new ResponseEntity<>("Invalid OTP", HttpStatus.UNAUTHORIZED);
+//	  }
+//	  
+//	  @PostMapping("/register/sendotp")
+//	  public ResponseEntity<RegisterResponse> sendOTP(@RequestBody OtpRequest request){
+//		  RegisterResponse response = otpService.sendOTP(request);
+//		  if(response != null)
+//			  return new ResponseEntity<>(response,HttpStatus.OK);  
+//		  else 
+//			  return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);	
+//	  }
 	  
 	  @PostMapping("/authenticate")
 	  public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {

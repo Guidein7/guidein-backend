@@ -281,15 +281,16 @@ public class AdminService {
 			Subscription subscription = subscriptionRepo.findByEmailAndActive(referral.getRequestedBy(), true).orElseThrow();
 			
 			subscription.setUsedReferralCredits(subscription.getUsedReferralCredits() + 1);
-			subscriptionRepo.save(subscription);
-			
+				
 			referral.setStatus(ReferralStatus.REFERRED);
-			referralRepo.save(referral);
 			
 			Wallet wallet = walletRepo.findByEmail(referral.getJobPostedBy()).orElseThrow();
 			wallet.setTotalReferrals(wallet.getTotalReferrals() + 1);
 			wallet.setTotalEarned(wallet.getTotalEarned() + 500);
 			wallet.setCurrentBalance(wallet.getCurrentBalance() + 500);
+			
+			subscriptionRepo.save(subscription);
+			referralRepo.save(referral);
 			walletRepo.save(wallet);
 			
 		} catch (Exception e) {
