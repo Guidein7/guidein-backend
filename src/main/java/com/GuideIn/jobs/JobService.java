@@ -125,7 +125,7 @@ public class JobService {
 			if(referral != null) {
 				if(referral.getStatus() == ReferralStatus.VERIFICATION_FAILED)
 					status = ReferralStatus.REJECTED;
-				if(referral.getStatus() == ReferralStatus.IN_VERIFICATION)
+				else if(referral.getStatus() == ReferralStatus.IN_VERIFICATION)
 					status = ReferralStatus.IN_PROGRESS;
 				else
 					status = referral.getStatus();
