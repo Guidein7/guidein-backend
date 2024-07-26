@@ -17,7 +17,8 @@ public class DashboardDTO {
 	private int availableReferrals;
 	private int referralsRequested;
 	private int referralsInProgress;
-	private int referralsSucessful;
+	private int referralsSuccessful;
+	private int totalReferralSuccessful;
 	
 	private List<PlanDetails> planHistory;
 }

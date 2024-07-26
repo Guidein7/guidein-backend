@@ -1,5 +1,9 @@
 package com.GuideIn.admin;
 
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -221,6 +225,7 @@ public class AdminService {
 						.status(referral.getStatus())
 						.mobileOfrequestedBy(jobSeeker.getMobile())
 						.mobileOfJobPostedBy(jobPoster.getMobile())
+						.requestedAgo(getTimeAgo(referral.getRequestedOnWithTime()))
 						.build();
 				referralsDTO.add(referralDTO);
 			} catch (Exception e) {
@@ -367,5 +372,52 @@ public class AdminService {
 		}
 		return true;
 	}
+	
+	@Transactional
+	public boolean rejectReferralRequest(RejectReferralDTO request) {
+		try {
+			Referral referral = referralRepo.findById(request.getReferralId()).orElseThrow();
+			Subscription subscription = subscriptionRepo.findByEmailAndActive(referral.getRequestedBy(), true).orElseThrow();
+			referral.setStatus(ReferralStatus.REJECTED);
+			referral.setReason(request.getReason());
+			referral.setComments(request.getComments());
+			
+			subscription.setAvailableReferralCredits(subscription.getAvailableReferralCredits() + 1);
+			
+			referralRepo.save(referral);
+			subscriptionRepo.save(subscription);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+
+	
+	public String getTimeAgo(String requestedOn) {
+  
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+        LocalDateTime requestedDateTime = LocalDateTime.parse(requestedOn, formatter);
+        LocalDateTime now = LocalDateTime.now();
+        Duration duration = Duration.between(requestedDateTime, now);
+        
+        long days = duration.toDays();
+        long hours = duration.toHours();
+        long minutes = duration.toMinutes() % 60; // Remainder minutes after full hours
+
+        if (hours >= 48) {
+            return "expired";
+        } else if (days >= 1) {
+            return days == 1 ? "1 day ago" : days + " days ago";
+        } else if (hours >= 1) {
+            return hours == 1 ? "1 hr ago" : hours + " hrs ago";
+        } else if (minutes >= 1) {
+            return minutes == 1 ? "1 min ago" : minutes + " mins ago";
+        } else {
+            return "just now";
+        }
+    }
+
 	
 }

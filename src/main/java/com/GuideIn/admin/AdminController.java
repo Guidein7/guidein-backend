@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -96,6 +97,13 @@ public class AdminController {
 		if(response != null)
 			return ResponseEntity.ok(response);
 		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+	}
+	
+	@PutMapping("/rejectReferralRequest")
+	public ResponseEntity<String> rejectReferralRequest(@RequestBody RejectReferralDTO request){
+		if(service.rejectReferralRequest(request))
+			return ResponseEntity.ok("Referral request rejected successfully");
+		return new ResponseEntity<>("Unable to reject the referral request",HttpStatus.FORBIDDEN);
 	}
 	
 	@PutMapping("/approveReferral/{referralId}")

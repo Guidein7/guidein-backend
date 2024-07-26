@@ -1,6 +1,7 @@
 package com.GuideIn.referral;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -51,6 +53,16 @@ public class Referral {
 	
 	@PrePersist
 	protected void onCreate() {
-		requstedOn = LocalDate.now().toString();
+		requstedOn = LocalDateTime.now().withNano(0).toString();
+	}
+	
+	public String getRequestedOnWithTime() {
+		return requstedOn;
+	}
+	
+	@Transient
+	public String getRequstedOn() {
+		 LocalDateTime dateTime = LocalDateTime.parse(requstedOn);
+	     return dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 	}
 }

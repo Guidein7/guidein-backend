@@ -19,5 +19,6 @@ public class ReferralsDTO {
 	private String jobPostedBy;
 	private String mobileOfJobPostedBy;
 	private String requestedOn;
+	private String requestedAgo;
 	private ReferralStatus status;
 }

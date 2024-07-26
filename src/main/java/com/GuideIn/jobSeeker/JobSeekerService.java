@@ -277,6 +277,7 @@ public class JobSeekerService {
 		try {
 			Long countOfRequested = referralRepo.countByRequestedByAndStatus(email, ReferralStatus.REQUESTED);
 			Long countOfInProgress = referralRepo.countByRequestedByAndStatus(email, ReferralStatus.IN_VERIFICATION);
+			Long countOfTotalReferred = referralRepo.countByRequestedByAndStatus(email, ReferralStatus.REFERRED);
 			List<Subscription> subscriptionsHistory = subscriptionRepo.findByEmail(email);
 			
 			for(Subscription subs : subscriptionsHistory) {		
@@ -289,6 +290,7 @@ public class JobSeekerService {
 				planDetails.add(plan);
 			}
 			
+			dashboardDTO.setTotalReferralSuccessful(countOfTotalReferred.intValue());
 			dashboardDTO.setPlanHistory(planDetails);
 			
 			Subscription subscription = subscriptionRepo.findByEmailAndActive(email, true).orElse(null);
@@ -298,7 +300,7 @@ public class JobSeekerService {
 				dashboardDTO.setAvailableReferrals(subscription.getAvailableReferralCredits());
 				dashboardDTO.setReferralsRequested(countOfRequested.intValue());
 				dashboardDTO.setReferralsInProgress(countOfInProgress.intValue());
-				dashboardDTO.setReferralsSucessful(subscription.getUsedReferralCredits());
+				dashboardDTO.setReferralsSuccessful(subscription.getUsedReferralCredits());
 			}
 			
 		} catch (Exception e) {
