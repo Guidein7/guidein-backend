@@ -2,7 +2,7 @@ package com.GuideIn.subscription;
 
 public enum Plan {
 	
-    STANDARD(2, 1199),
+    STANDARD(2, 1),
     PREMIUM(5, 2899),
     ULTIMATE(10, 5399);
 
