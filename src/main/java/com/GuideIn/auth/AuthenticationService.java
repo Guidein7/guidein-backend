@@ -36,7 +36,7 @@ public class AuthenticationService {
 		if(repository.findByEmailAndRole(request.getEmail(),request.getRole()).isEmpty() && 
 				repository.findByMobileAndRole(request.getMobile(), request.getRole()).isEmpty()) {
 			
-			Boolean verified = false;
+			Boolean verified = true; /// without sms
 			if(request.getRole() == Role.ADMIN)
 				verified = true;
 			

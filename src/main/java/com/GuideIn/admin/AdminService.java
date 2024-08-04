@@ -406,7 +406,7 @@ public class AdminService {
         long hours = duration.toHours();
         long minutes = duration.toMinutes() % 60; // Remainder minutes after full hours
 
-        if (hours >= 48) {
+        if (days >= 3) {
             return "expired";
         } else if (days >= 1) {
             return days == 1 ? "1 day ago" : days + " days ago";

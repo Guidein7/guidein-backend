@@ -38,8 +38,8 @@ public class SecurityConfiguration {
 	        		.requestMatchers("/api/guidein/v1/admin/**").hasAuthority("ADMIN")
 	        		.anyRequest()
 	        		.authenticated())
-	        .sessionManagement(session -> session
-	        		.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//	        .sessionManagement(session -> session
+//	        		.sessionCreationPolicy(SessionCreationPolicy.NEVER))
 	        .authenticationProvider(authenticationProvider)
 	        .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
