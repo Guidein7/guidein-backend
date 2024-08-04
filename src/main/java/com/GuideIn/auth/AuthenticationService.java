@@ -49,8 +49,8 @@ public class AuthenticationService {
 			        .verified(verified)
 			        .build();
 			repository.save(user);
-			if(user.getRole() != Role.ADMIN)
-				otpService.sendOTP(user.getEmail(), user.getMobile());
+//			if(user.getRole() != Role.ADMIN)
+//				otpService.sendOTP(user.getEmail(), user.getMobile());
 			return true;
 		}
 		else return false; 
