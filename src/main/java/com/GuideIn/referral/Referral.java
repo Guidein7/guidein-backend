@@ -53,7 +53,7 @@ public class Referral {
 	
 	@PrePersist
 	protected void onCreate() {
-		requstedOn = LocalDateTime.now().withNano(0).toString();
+		requstedOn = LocalDateTime.now().withNano(0).format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"));
 	}
 	
 	public String getRequestedOnWithTime() {

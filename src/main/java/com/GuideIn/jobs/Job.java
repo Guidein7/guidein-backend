@@ -1,6 +1,7 @@
 package com.GuideIn.jobs;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -41,7 +42,7 @@ public class Job {
 	
 	@PrePersist
 	protected void onCreate() {
-		postedOn = LocalDateTime.now().withNano(0).toString();
+		postedOn = LocalDateTime.now().withNano(0).format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"));
 	}
 
 }
