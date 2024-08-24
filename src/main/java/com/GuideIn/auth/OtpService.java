@@ -63,9 +63,9 @@ public class OtpService {
 //		
 //		RegisterResponse response = null;
 //		
-//		Plivo.init(config.getAuthId(), config.getAuthToken());
-//		
 //        try {
+//	
+//			Plivo.init(config.getAuthId(), config.getAuthToken());
 //        	SessionCreateResponse sessionResponse = VerifySession.creator(
 //                    config.getVerifyAppUuid(), 
 //                    mobile, "sms", "", "POST") 
@@ -93,9 +93,10 @@ public class OtpService {
 //		RegisterResponse response = null;
 //		User user = null;
 //		
-//		Plivo.init(config.getAuthId(), config.getAuthToken());
-//		
 //		try {
+//	
+//			Plivo.init(config.getAuthId(), config.getAuthToken());
+//	
 //			if(request.getEmail().isEmpty())
 //				user = repo.findByMobileAndRole(request.getMobile(), request.getRole()).orElseThrow(); 
 //			else
@@ -119,10 +120,11 @@ public class OtpService {
 //	
 //	@Transactional
 //	public boolean validateOTP(OtpValidateRequest request) throws DataAccessException {
-//	
-//		Plivo.init(config.getAuthId(), config.getAuthToken());
 //		
 //		try{
+//	
+//			Plivo.init(config.getAuthId(), config.getAuthToken());
+//	
 //			SessionCreateResponse response = VerifySession.validation(
 //					request.getSessionUUID(), request.getOtp()) // Validation
 //					.create();

@@ -13,6 +13,7 @@ public class DashboardDetailsDTO {
 	
 	private Long totalRegisteredJobSeekers;
 	private Long totalSubscribedUsers;
+	private Long totalSubscriptions;
 	private Long totalRegisteredJobPosters;
 	private Long totalJobPosted;
 	private Long totalDisabledJobs;

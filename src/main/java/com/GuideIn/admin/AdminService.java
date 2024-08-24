@@ -20,6 +20,8 @@ import com.GuideIn.jobs.Job;
 import com.GuideIn.jobs.JobDTO;
 import com.GuideIn.jobs.JobRepository;
 import com.GuideIn.jobs.JobService;
+import com.GuideIn.plivo.DLTdetails;
+import com.GuideIn.plivo.PlivoMessageService;
 import com.GuideIn.referral.Referral;
 import com.GuideIn.referral.ReferralRepository;
 import com.GuideIn.referral.ReferralStatus;
@@ -32,6 +34,7 @@ import com.GuideIn.wallet.Wallet;
 import com.GuideIn.wallet.WalletRepository;
 import com.GuideIn.wallet.WalletTransactionDetail;
 import com.GuideIn.wallet.WalletTransactionDetailRepo;
+import com.plivo.api.Plivo;
 
 import jakarta.transaction.Transactional;
 
@@ -64,6 +67,9 @@ public class AdminService {
 	
 	@Autowired
 	JobService jobService;
+	
+	@Autowired
+	PlivoMessageService messageService;
 
 	public List<JobSeekerRegisterdUsers> getJobSeekerRegisteredUsers() {
 		List<JobSeekerRegisterdUsers> jobSeekerRegisterdUsers = new ArrayList<>();
@@ -187,6 +193,7 @@ public class AdminService {
 		try {
 			Long totalRegisteredJobSeekers = userRepo.countByRole(Role.JOB_SEEKER);
 			Long totalSubscribedUsers = subscriptionRepo.countByActive(true);
+			Long totalSubscriptions = subscriptionRepo.count();
 			Long totalRegisteredJobPosters = userRepo.countByRole(Role.JOB_POSTER);
 			Long totalJobPosted = jobRepo.countByEnabled(true);
 			Long totalDisabledJobs = jobRepo.countByEnabled(false);
@@ -194,6 +201,7 @@ public class AdminService {
 			dashboardDetailsDTO = DashboardDetailsDTO.builder()
 					.totalRegisteredJobSeekers(totalRegisteredJobSeekers)
 					.totalSubscribedUsers(totalSubscribedUsers)
+					.totalSubscriptions(totalSubscriptions)
 					.totalRegisteredJobPosters(totalRegisteredJobPosters)
 					.totalJobPosted(totalJobPosted)
 					.totalDisabledJobs(totalDisabledJobs)
@@ -279,11 +287,13 @@ public class AdminService {
 	}
 	
 	@Transactional
-	public boolean approvereferral(Long referralId) {
+	public boolean approveReferral(Long referralId) {
 		
 		try {
 			Referral referral = referralRepo.findById(referralId).orElseThrow();
+			Job job = jobRepo.findById(referral.getJobId()).orElseThrow();
 			Subscription subscription = subscriptionRepo.findByEmailAndActive(referral.getRequestedBy(), true).orElseThrow();
+			JobPoster jobPoster = jobPosterRepo.findByEmail(job.getJobPostedBy()).orElseThrow();
 			
 			subscription.setUsedReferralCredits(subscription.getUsedReferralCredits() + 1);
 				
@@ -298,6 +308,19 @@ public class AdminService {
 			referralRepo.save(referral);
 			walletRepo.save(wallet);
 			
+			//message to jobSeeker
+			messageService.sendMessage(
+					DLTdetails.POST_SUCCESSFULL_REFERRAL,
+					subscription.getMobile(),
+					job.getJobTitle(),
+					job.getCompanyName());
+			
+			//message to jobPoster
+			messageService.sendMessage(
+					DLTdetails.REFERRAL_APPROVED,
+					jobPoster.getMobile(),
+					job.getJobTitle());
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
@@ -310,6 +333,8 @@ public class AdminService {
 		try {
 			Referral referral = referralRepo.findById(request.getReferralId()).orElseThrow();
 			Subscription subscription = subscriptionRepo.findByEmailAndActive(referral.getRequestedBy(), true).orElseThrow();
+			Job job = jobRepo.findById(referral.getJobId()).orElseThrow();
+			JobPoster jobPoster = jobPosterRepo.findByEmail(job.getJobPostedBy()).orElseThrow();
 			referral.setStatus(ReferralStatus.VERIFICATION_FAILED);
 			referral.setReason(request.getReason());
 			referral.setComments(request.getComments());
@@ -318,6 +343,19 @@ public class AdminService {
 			
 			referralRepo.save(referral);
 			subscriptionRepo.save(subscription);
+			
+			//message to jobSeeker
+			messageService.sendMessage(
+					DLTdetails.POST_REFERRAL_REJECTION,
+					subscription.getMobile(),
+					job.getJobTitle(),
+					job.getCompanyName());
+			
+			//message to jobPoster
+			messageService.sendMessage( 
+					DLTdetails.REFERRAL_REJECTED,
+					jobPoster.getMobile(),
+					job.getJobTitle());
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -378,6 +416,7 @@ public class AdminService {
 		try {
 			Referral referral = referralRepo.findById(request.getReferralId()).orElseThrow();
 			Subscription subscription = subscriptionRepo.findByEmailAndActive(referral.getRequestedBy(), true).orElseThrow();
+			Job job = jobRepo.findById(referral.getJobId()).orElseThrow();
 			referral.setStatus(ReferralStatus.REJECTED);
 			referral.setReason(request.getReason());
 			referral.setComments(request.getComments());
@@ -386,6 +425,13 @@ public class AdminService {
 			
 			referralRepo.save(referral);
 			subscriptionRepo.save(subscription);
+			
+			////message to jobSeeker
+			messageService.sendMessage(
+					DLTdetails.POST_REFERRAL_REJECTION,
+					subscription.getMobile(),
+					job.getJobTitle(),
+					job.getCompanyName());
 			
 		} catch (Exception e) {
 			e.printStackTrace();

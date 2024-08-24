@@ -5,6 +5,8 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.GuideIn.plivo.DLTdetails;
+import com.GuideIn.plivo.PlivoMessageService;
 import com.GuideIn.razorpay.RazorpayConfig;
 import com.razorpay.Order;
 import com.razorpay.RazorpayClient;
@@ -21,6 +23,9 @@ public class SubscriptionService {
 	
 	@Autowired
 	RazorpayConfig config;
+	
+	@Autowired
+	PlivoMessageService messageService;
 
 	public SubscritionResponse subscribe(SubscriptionRequest request) {
 
@@ -72,6 +77,9 @@ public class SubscriptionService {
 		boolean status = false;
 		try {
 			status = Utils.verifyPaymentSignature(options, config.getSecret());
+			if(status == false) // verify payment
+				return false;
+			
 			Subscription subscription = repo.findByEmailAndActive(request.getEmail(), true).orElse(new Subscription());
 			subscription.setOrderId(request.getOrder_id());
 			subscription.setPaymentId(request.getPayment_id());
@@ -85,10 +93,11 @@ public class SubscriptionService {
 			subscription.setName(request.getName());
 
 			repo.save(subscription);
-		} catch (RazorpayException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return status;
 		}
+		messageService.sendMessage(DLTdetails.POST_SUCCESSFULL_SUBSCRIPTION,request.getContact());
 		return status;
 	}
 

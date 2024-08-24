@@ -14,9 +14,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.GuideIn.jobPoster.JobPoster;
 import com.GuideIn.jobPoster.JobPosterService;
 import com.GuideIn.jobPoster.RejectReferralDTO;
 import com.GuideIn.jobSeeker.AppliedReferralDTO;
+import com.GuideIn.jobSeeker.JobSeeker;
+import com.GuideIn.jobSeeker.JobSeekerService;
 import com.GuideIn.jobs.JobDTO;
 import com.GuideIn.jobs.JobService;
 import com.GuideIn.wallet.WalletDTO;
@@ -36,6 +39,9 @@ public class AdminController {
 	
 	@Autowired
 	JobPosterService jobPosterService;
+	
+	@Autowired
+	JobSeekerService jobSeekerService;
 	
 	@GetMapping("/getDashboardDetails")
 	public ResponseEntity<DashboardDetailsDTO> getDashboardDetails(){
@@ -108,7 +114,7 @@ public class AdminController {
 	
 	@PutMapping("/approveReferral/{referralId}")
 	public ResponseEntity<String> approveReferral(@PathVariable Long referralId){
-		if(service.approvereferral(referralId))
+		if(service.approveReferral(referralId))
 			return ResponseEntity.ok("Referral approved successfully");
 		return new ResponseEntity<>("Unable to approve referral",HttpStatus.FORBIDDEN);
 	}
@@ -138,6 +144,22 @@ public class AdminController {
 		if(service.submitDeposit(request))
 			return ResponseEntity.ok("Deposit submitted successfully");
 		return new ResponseEntity<>("Unable to submit the deposit",HttpStatus.FORBIDDEN);
+	}
+	
+	@GetMapping("/getJobSeekerProfile/{email}")
+	public ResponseEntity<JobSeeker> getJobSeekerProfile(@PathVariable String email){
+		JobSeeker jobSeeker = jobSeekerService.getProfile(email);
+		if(jobSeeker != null)
+			return ResponseEntity.ok(jobSeeker);
+		else return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null); //204
+	}
+	
+	@GetMapping("/getJobPosterProfile/{email}")
+	public ResponseEntity<JobPoster> getJobPosterProfile(@PathVariable String email){
+		JobPoster jobPoster = jobPosterService.getProfile(email);
+		if(jobPoster != null)
+			return ResponseEntity.ok(jobPoster);
+		else return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null); //204
 	}
 
 }

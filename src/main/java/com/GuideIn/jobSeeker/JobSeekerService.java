@@ -12,6 +12,8 @@ import com.GuideIn.jobs.Job;
 import com.GuideIn.jobs.JobDTO;
 import com.GuideIn.jobs.JobRepository;
 import com.GuideIn.jobs.JobService;
+import com.GuideIn.plivo.DLTdetails;
+import com.GuideIn.plivo.PlivoMessageService;
 import com.GuideIn.referral.Referral;
 import com.GuideIn.referral.ReferralRepository;
 import com.GuideIn.referral.ReferralRequestDTO;
@@ -41,6 +43,9 @@ public class JobSeekerService {
 	
 	@Autowired
 	JobService jobService;
+	
+	@Autowired
+	PlivoMessageService messageService;
 	
 	@Autowired
 	SubscriptionRepository subscriptionRepo;
@@ -168,6 +173,8 @@ public class JobSeekerService {
 	public boolean requestReferral(ReferralRequestDTO request) {
 		try {
 			Subscription subscription = subscriptionRepo.findByEmailAndActive(request.getRequestedBy(), true).orElseThrow();
+			JobPoster jobPoster = jobPosterRepo.findByEmail(request.getJobPostedBy()).orElseThrow();
+			Job job = jobRepo.findById(request.getJobId()).orElseThrow();
 			int availableCredits = subscription.getAvailableReferralCredits();
 			if(availableCredits > 0) {
 			
@@ -183,6 +190,11 @@ public class JobSeekerService {
 				
 				referralRepo.save(referral);
 				subscriptionRepo.save(subscription);
+				
+				messageService.sendMessage(
+						DLTdetails.REFERRAL_REQUESTED,
+						jobPoster.getMobile(),
+						job.getJobTitle());
 			}
 			else return false;
 			

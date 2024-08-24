@@ -22,21 +22,29 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthenticationService {
 	
-	  private final UserRepository repository;
-	  private final PasswordEncoder passwordEncoder;
-	  private final JwtService jwtService;
-	  private final AuthenticationManager authenticationManager;
 	  @Autowired
-	  private final OtpService otpService;
+	  private final UserRepository repository;
 	  
-	  ///// TEST /////
+	  @Autowired
+	  private final PasswordEncoder passwordEncoder;
+	  
+	  @Autowired
+	  private final JwtService jwtService;
+	  
+	  @Autowired
+	  private final AuthenticationManager authenticationManager;
+	  
+	  @Autowired
+	  private final OtpService1 otpService;
+	  
+	  ///// Using own DLT template /////
 	  @Transactional
-	  public boolean register(RegisterRequest request) throws DataAccessException {
+	  public Boolean register(RegisterRequest request) throws DataAccessException {
 		  
 		if(repository.findByEmailAndRole(request.getEmail(),request.getRole()).isEmpty() && 
 				repository.findByMobileAndRole(request.getMobile(), request.getRole()).isEmpty()) {
 			
-			Boolean verified = true; /// without sms
+			Boolean verified = false; 
 			if(request.getRole() == Role.ADMIN)
 				verified = true;
 			
@@ -48,16 +56,25 @@ public class AuthenticationService {
 			        .role(request.getRole())
 			        .verified(verified)
 			        .build();
-			repository.save(user);
-//			if(user.getRole() != Role.ADMIN)
-//				otpService.sendOTP(user.getEmail(), user.getMobile());
-			return true;
+			
+			if(user.getRole() != Role.ADMIN) {
+				if(otpService.sendOTP(user.getMobile(),user.getRole())) {
+					repository.save(user); //only save user after successful sending of OTP 
+					return true;
+				}	
+				else return false;
+			}
+			
+			else {
+				repository.save(user);
+				return true;
+			}
 		}
-		else return false; 
+		else return null; 
 	  }
 	  
-	  //////// TEST /////////
 	  
+	  // Using Plivo verify APi
 	  
 //	  @Transactional
 //	  public RegisterResponse register(RegisterRequest request) throws DataAccessException {

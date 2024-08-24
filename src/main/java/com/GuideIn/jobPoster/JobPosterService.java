@@ -11,6 +11,8 @@ import com.GuideIn.jobSeeker.JobSeekerRepo;
 import com.GuideIn.jobs.Job;
 import com.GuideIn.jobs.JobRepository;
 import com.GuideIn.jobs.JobService;
+import com.GuideIn.plivo.DLTdetails;
+import com.GuideIn.plivo.PlivoMessageService;
 import com.GuideIn.referral.Referral;
 import com.GuideIn.referral.ReferralRepository;
 import com.GuideIn.referral.ReferralStatus;
@@ -31,6 +33,9 @@ public class JobPosterService {
 	
 	@Autowired
 	JobService jobService;
+	
+	@Autowired
+	PlivoMessageService messageService;
 	
 	@Autowired
 	JobPosterRepo repo;
@@ -162,6 +167,7 @@ public class JobPosterService {
 		try {
 			Referral referral = referralRepo.findById(request.getReferralId()).orElseThrow();
 			Subscription subscription = subscriptionRepository.findByEmailAndActive(referral.getRequestedBy(), true).orElseThrow();
+			Job job = jobRepo.findById(referral.getJobId()).orElseThrow();
 			referral.setStatus(ReferralStatus.REJECTED);
 			referral.setReason(request.getReason());
 			referral.setComments(request.getComments());
@@ -170,6 +176,12 @@ public class JobPosterService {
 			
 			referralRepo.save(referral);
 			subscriptionRepository.save(subscription);
+			
+			messageService.sendMessage(
+					DLTdetails.POST_REFERRAL_REJECTION,
+					subscription.getMobile(),
+					job.getJobTitle(),
+					job.getCompanyName());
 			
 		} catch (Exception e) {
 			e.printStackTrace();
