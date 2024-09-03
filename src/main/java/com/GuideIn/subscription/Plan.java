@@ -2,9 +2,9 @@ package com.GuideIn.subscription;
 
 public enum Plan {
 	
-    STANDARD(2, 1199),
-    PREMIUM(5, 2899),
-    ULTIMATE(10, 5399);
+    STANDARD(1, 399),
+    PREMIUM(2, 599),
+    ULTIMATE(3, 899);
 
 	private final int totalReferralCredits;
     private final double price;
