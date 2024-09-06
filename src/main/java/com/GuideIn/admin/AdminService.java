@@ -301,8 +301,8 @@ public class AdminService {
 			
 			Wallet wallet = walletRepo.findByEmail(referral.getJobPostedBy()).orElseThrow();
 			wallet.setTotalReferrals(wallet.getTotalReferrals() + 1);
-			wallet.setTotalEarned(wallet.getTotalEarned() + 500);
-			wallet.setCurrentBalance(wallet.getCurrentBalance() + 500);
+			wallet.setTotalEarned(wallet.getTotalEarned() + 200);
+			wallet.setCurrentBalance(wallet.getCurrentBalance() + 200);
 			
 			subscriptionRepo.save(subscription);
 			referralRepo.save(referral);

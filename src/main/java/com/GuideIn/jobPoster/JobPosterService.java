@@ -141,6 +141,7 @@ public class JobPosterService {
 					.candidateExperience(jobSeeker.getExperience())
 					.candidateLinkedInUrl(jobSeeker.getLinkedInUrl())
 					.referralFor(job.getJobTitle())
+					.requestedOn(referral.getRequstedOn())
 					.referralId(referral.getReferralId())
 					.jobId(job.getJobId())
 					.company(job.getCompanyName())

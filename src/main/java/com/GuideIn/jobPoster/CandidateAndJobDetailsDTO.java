@@ -22,6 +22,7 @@ public class CandidateAndJobDetailsDTO {
 	private String candidateExperience;
 	private String candidateLinkedInUrl;
 	private String referralFor;
+	private String requestedOn;
 	private Long referralId;
 	private Long jobId;
 	private String company;
