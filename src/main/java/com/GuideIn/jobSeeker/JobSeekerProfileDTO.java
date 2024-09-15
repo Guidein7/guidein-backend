@@ -22,6 +22,9 @@ public class JobSeekerProfileDTO implements Serializable{
 	private String mobile;
 	private String currentStatus;
 	private String experience;
+	private String currentRole;
+	private String currentCompany;
+	private String preferredRole;
 	private String linkedInUrl;
 	private MultipartFile resume;
 

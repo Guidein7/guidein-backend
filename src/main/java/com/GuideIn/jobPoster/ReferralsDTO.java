@@ -19,6 +19,7 @@ public class ReferralsDTO {
 	private String candidateName;
 	private String candidateExperience;
 	private String referralFor;
+	private String jobDescriptionLink;
 	private Long referralId;
 	private String requestedOn;
 	private ReferralStatus status;

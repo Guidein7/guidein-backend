@@ -27,6 +27,9 @@ public class JobSeeker {
 	String mobile;
 	String currentStatus;
 	String experience;
+	String currentRole;
+	String currentCompany;
+	String preferredRole;
 	String linkedInUrl;
 	@Lob
 	@Column(columnDefinition = "LONGBLOB")

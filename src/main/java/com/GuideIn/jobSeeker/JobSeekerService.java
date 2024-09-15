@@ -60,6 +60,9 @@ public class JobSeekerService {
 			jobSeeker.setMobile(request.getMobile());
 			jobSeeker.setCurrentStatus(request.getCurrentStatus());
 			jobSeeker.setExperience(request.getExperience());
+			jobSeeker.setCurrentRole(request.getCurrentRole());
+			jobSeeker.setCurrentCompany(request.getCurrentCompany());
+			jobSeeker.setPreferredRole(request.getPreferredRole());
 			jobSeeker.setLinkedInUrl(request.getLinkedInUrl());
 			jobSeeker.setResume(request.getResume().getBytes());
 			repo.save(jobSeeker);
@@ -76,6 +79,9 @@ public class JobSeekerService {
 			JobSeeker jobSeeker = repo.findByEmail(request.getEmail()).orElseThrow();
 			jobSeeker.setCurrentStatus(request.getCurrentStatus());
 			jobSeeker.setExperience(request.getExperience());
+			jobSeeker.setCurrentRole(request.getCurrentRole());
+			jobSeeker.setCurrentCompany(request.getCurrentCompany());
+			jobSeeker.setPreferredRole(request.getPreferredRole());
 			jobSeeker.setLinkedInUrl(request.getLinkedInUrl());
 			jobSeeker.setResume(request.getResume().getBytes());
 			repo.save(jobSeeker);

@@ -1,4 +1,4 @@
-package com.GuideIn.jobSeeker;
+	package com.GuideIn.jobSeeker;
 
 import java.io.IOException;
 import java.util.List;
@@ -43,7 +43,7 @@ public class JobSeekerController {
 	@GetMapping("/postedjobs/{email}")
 	public ResponseEntity<List<JobDTO>> getPostedJobs(@PathVariable String email ){
 		return new ResponseEntity<>(service.fetchPostedJobs(email),HttpStatus.OK);
-	} 
+	}
 	
 	@PostMapping("/saveProfile")
 	public ResponseEntity<String> saveProfile(@ModelAttribute JobSeekerProfileDTO request) throws IOException{

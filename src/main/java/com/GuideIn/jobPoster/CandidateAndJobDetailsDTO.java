@@ -26,8 +26,9 @@ public class CandidateAndJobDetailsDTO {
 	private Long referralId;
 	private Long jobId;
 	private String company;
-	String jobLocation;
-	String workMode;
+	private String jobDescriptionLink;
+	private String jobLocation;
+	private String workMode;
 	private String experienceRequired;
 	private String jobPostedOn;
 	private ReferralStatus referralStatus;
