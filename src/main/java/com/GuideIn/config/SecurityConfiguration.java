@@ -33,6 +33,7 @@ public class SecurityConfiguration {
 	        .authorizeHttpRequests(auth -> auth
 	        		.requestMatchers("/api/guidein/v1/auth/**")
 	        		.permitAll()
+
 	        		.requestMatchers("/api/guidein/v1/job_poster/**").hasAuthority("JOB_POSTER")
 	        		.requestMatchers("/api/guidein/v1/job_seeker/**").hasAuthority("JOB_SEEKER")
 	        		.requestMatchers("/api/guidein/v1/admin/**").hasAuthority("ADMIN")

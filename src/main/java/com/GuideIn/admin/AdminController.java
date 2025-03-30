@@ -162,4 +162,9 @@ public class AdminController {
 		else return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null); //204
 	}
 
+	@GetMapping("/getAllLearners")
+	public  ResponseEntity<List<Learner>> getLearners() {
+		return  new ResponseEntity<>(service.getAllLearners(),HttpStatus.OK);
+	}
+
 }

@@ -7,7 +7,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.GuideIn.auth.DuplicateEntityException;
+import com.GuideIn.auth.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.GuideIn.jobPoster.JobPoster;
@@ -55,6 +58,9 @@ public class AdminService {
 	
 	@Autowired
 	JobSeekerRepo jobSeekerRepo;
+
+	@Autowired
+	LearnerRepo learnerRepo;
 	
 	@Autowired
 	ReferralRepository referralRepo;
@@ -464,6 +470,34 @@ public class AdminService {
             return "just now";
         }
     }
+
+	public Learner saveLearnerDetails(Learner learner) {
+		// Validate important fields
+		if (learner.getFullName() == null || learner.getFullName().trim().isEmpty()) {
+			throw new ValidationException("Learner name cannot be empty");
+		}
+
+		// Check for duplicates (assuming email is unique)
+		if (learner.getEmail() != null && !learner.getEmail().trim().isEmpty()) {
+			Learner existingLearner = learnerRepo.findByEmail(learner.getEmail());
+			if (existingLearner != null) {
+				throw new DuplicateEntityException("Your request with this email (" + learner.getEmail() + ") has already been submitted.");
+			}
+		}
+
+		try {
+			return learnerRepo.save(learner);
+		} catch (DataIntegrityViolationException e) {
+			throw new DuplicateEntityException("Learner with provided details already exists");
+		} catch (Exception e) {
+
+			throw new RuntimeException("Failed to save learner details");
+		}
+	}
+
+	public  List<Learner> getAllLearners() {
+		return  learnerRepo.findAll();
+	}
 
 	
 }

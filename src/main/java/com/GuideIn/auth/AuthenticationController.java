@@ -1,5 +1,7 @@
 package com.GuideIn.auth;
 
+import com.GuideIn.admin.AdminService;
+import com.GuideIn.admin.Learner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +23,9 @@ public class AuthenticationController {
 	
 	  @Autowired	
 	  private final AuthenticationService service;
+
+	  @Autowired
+	  private final AdminService adminService;
 	  
 	  @Autowired
 	  private final OtpService otpService;
@@ -133,4 +138,22 @@ public class AuthenticationController {
 		  return ResponseEntity.ok("Password rest successful");
 		  
 	  }
+
+	@PostMapping("/savelearnerdetails")
+	public ResponseEntity<?> saveLearnerDetails(@RequestBody  Learner learner) {
+		try {
+			Learner savedLearner = adminService.saveLearnerDetails(learner);
+			ApiResponse response = new ApiResponse(true, "Learner details saved successfully", savedLearner);
+			return new ResponseEntity<>(response, HttpStatus.CREATED);
+		} catch (ValidationException e) {
+			ApiResponse response = new ApiResponse(false, e.getMessage(), null);
+			return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+		} catch (DuplicateEntityException e) {
+			ApiResponse response = new ApiResponse(false, e.getMessage(), null);
+			return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+		} catch (Exception e) {
+			ApiResponse response = new ApiResponse(false, "Failed to save learner details. Please try again later.", null);
+			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 }
