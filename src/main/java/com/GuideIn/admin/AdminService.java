@@ -479,8 +479,6 @@ public class AdminService {
 
 		try {
 			return learnerRepo.save(learner);
-		} catch (DataIntegrityViolationException e) {
-			throw new DuplicateEntityException("Learner with provided details already exists");
 		} catch (Exception e) {
 
 			throw new RuntimeException("Failed to save learner details");
