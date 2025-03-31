@@ -145,12 +145,6 @@ public class AuthenticationController {
 			Learner savedLearner = adminService.saveLearnerDetails(learner);
 			ApiResponse response = new ApiResponse(true, "Learner details saved successfully", savedLearner);
 			return new ResponseEntity<>(response, HttpStatus.CREATED);
-		} catch (ValidationException e) {
-			ApiResponse response = new ApiResponse(false, e.getMessage(), null);
-			return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-		} catch (DuplicateEntityException e) {
-			ApiResponse response = new ApiResponse(false, e.getMessage(), null);
-			return new ResponseEntity<>(response, HttpStatus.CONFLICT);
 		} catch (Exception e) {
 			ApiResponse response = new ApiResponse(false, "Failed to save learner details. Please try again later.", null);
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
