@@ -472,18 +472,10 @@ public class AdminService {
     }
 
 	public Learner saveLearnerDetails(Learner learner) {
-		// Validate important fields
-		if (learner.getFullName() == null || learner.getFullName().trim().isEmpty()) {
-			throw new ValidationException("Learner name cannot be empty");
-		}
 
-		// Check for duplicates (assuming email is unique)
-//		if (learner.getEmail() != null && !learner.getEmail().trim().isEmpty()) {
-//			Learner existingLearner = learnerRepo.findByEmail(learner.getEmail());
-//			if (existingLearner != null) {
-//				throw new DuplicateEntityException("Your request with this email (" + learner.getEmail() + ") has already been submitted.");
-//			}
-//		}
+
+
+
 
 		try {
 			return learnerRepo.save(learner);
