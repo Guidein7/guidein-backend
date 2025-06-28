@@ -23,7 +23,7 @@ public class CourseInfo {
 	    @Column(name = "institute_name")
 	    private String instituteName;
 
-	    @Column(name = "location")
+	    @Column(name = "location",columnDefinition = "TEXT")
 	    private String location;
 
 	    @Column(name = "address", columnDefinition = "TEXT")
@@ -48,12 +48,12 @@ public class CourseInfo {
 	    private String estimatedCoursePrice;
 
 	    @Column(name = "rating")
-	    private Double rating;
+	    private String rating;
 
 	    @Column(name = "number_of_reviews")
 	    private String numberOfReviews;
 
-	    @Column(name = "website_url")
+	    @Column(name = "website_url",columnDefinition = "TEXT")
 	    private String websiteUrl;
 
 	    @Column(name = "job_assistance")
@@ -62,7 +62,7 @@ public class CourseInfo {
 	    @Column(name = "institute_description", columnDefinition = "TEXT")
 	    private String instituteDescription;
 
-	    @Column(name = "map_location")
+	    @Column(name = "map_location",columnDefinition = "TEXT")
 	    private String mapLocation;
 
 	    @Column(name = "tags")
@@ -158,11 +158,11 @@ public class CourseInfo {
 			this.estimatedCoursePrice = estimatedCoursePrice;
 		}
 
-		public Double getRating() {
+		public String getRating() {
 			return rating;
 		}
 
-		public void setRating(Double rating) {
+		public void setRating(String rating) {
 			this.rating = rating;
 		}
 
