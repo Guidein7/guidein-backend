@@ -16,14 +16,14 @@ public class Company {
 	 @Id
 	    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	    private Long id;
-
+		
 	    private String companyName;
 
 	    private String industry;
 
 	    @Column(length = 1000)
 	    private String companyOverview;
-
+		@Column(columnDefinition = "TEXT")
 	    private String careerPageUrl;
 
 	   
