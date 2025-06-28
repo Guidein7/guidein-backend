@@ -19,7 +19,7 @@ public class Certification {
     @Column(name = "course_category", nullable = false)
     private String courseCategory;
 
-    @Column(name = "course_title", nullable = false)
+    @Column(name = "course_title", nullable = false,columnDefinition = "TEXT")
     private String courseTitle;
 
     private String provider;
@@ -29,10 +29,10 @@ public class Certification {
     @Column(name = "course_duration")
     private String courseDuration;
 
-    @Column(name = "course_link", length = 2048, nullable = false, unique = true)
+    @Column(name = "course_link", columnDefinition = "TEXT")
     private String courseLink;
 
-    @Column(name = "short_description", length = 1000)
+    @Column(name = "short_description", columnDefinition = "TEXT")
     private String shortDescription;
     
     @Column(name="file_path")
