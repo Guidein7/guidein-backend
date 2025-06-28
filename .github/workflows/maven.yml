@@ -10,9 +10,9 @@ name: Guidein backend CI-CD
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "guidein-v2" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "guidein-v2" ]
 
 jobs:
   build:
