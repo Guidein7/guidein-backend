@@ -16,16 +16,16 @@ public class YouTubeVideo {
 	@Id 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+	
     private String topic;
 
-    @Column(name = "video_title", nullable = false)
+    @Column(name = "video_title",columnDefinition = "TEXT")
     private String videoTitle;
 
     @Column(name = "total_views")
     private String totalViews;
 
-    @Column(name = "youtube_url", unique = true)
+    @Column(name = "youtube_url", columnDefinition = "TEXT")
     private String youtubeUrl;
 
     @Column(name = "channel_name")
@@ -33,7 +33,7 @@ public class YouTubeVideo {
 
     private String duration;
 
-    @Column(length = 2048)
+    @Column(columnDefinition = "TEXT")
     private String shortDescription;
     
     private String filePath;
