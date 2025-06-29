@@ -247,9 +247,13 @@ public class DataViewService {
 	Set<String> companyName=new HashSet<>();
 	for(String value:values) {
 		String arr[]=value.split(",");
+		if(arr.length==3){
 		industry.add(arr[0]);
+		
 		hiringStatus.add(arr[1]);
+		
 		companyName.add(arr[2]);
+		}
 	}
 	data.put("industry", industry);
 	data.put("hiringStatus", hiringStatus);
