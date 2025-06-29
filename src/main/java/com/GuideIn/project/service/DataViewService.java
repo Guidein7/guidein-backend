@@ -227,10 +227,12 @@ public class DataViewService {
 		Set<String> modeOfClass=new HashSet<>();
 		for(String value:values) {
 			String arr[]=value.split(",");
+			if(arr.length==4){
 			location.add(arr[0]);
 			price.add(arr[1]);
 			courseDuration.add(arr[2]);
 			modeOfClass.add(arr[3]);
+			}
 		}
 		data.put("location", location);
 		data.put("price", price);
