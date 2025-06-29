@@ -131,11 +131,12 @@ public class DataViewService {
 		// Location, Price, Course Duration,Mode of class
 		String location=allparams.getOrDefault("location", null);
 		String modeOfClass=allparams.getOrDefault("modeOfClass", null);
+		String duration=allparams.getOrDefault("duration",null);
 	    Pageable pageable = PageRequest.of(page, size);
 	    Page<CourseInfo> videoPage;
 
 	   
-	        videoPage = courseInfoRepository.findByFilters(location,modeOfClass, pageable);
+	        videoPage = courseInfoRepository.findByFilters(location,modeOfClass,duration, pageable);
 	    
 
 	    Map<String, Object> response = new HashMap<>();
@@ -183,11 +184,12 @@ public class DataViewService {
 
 	private Map<String, Object> getYoutubeData(Map<String, String> allparams, int page, int size) {
 		 String topic = allparams.getOrDefault("topic", null);
+		String duration=allparams.getOrDefault("duration", null);
 		    Pageable pageable = PageRequest.of(page, size);
 		    Page<YouTubeVideo> videoPage;
 
 		   
-		        videoPage = youTubeVideoRepository.findByTopic(topic, pageable);
+		        videoPage = youTubeVideoRepository.findByTopic(topic, duration,pageable);
 		    
 
 		    Map<String, Object> response = new HashMap<>();
