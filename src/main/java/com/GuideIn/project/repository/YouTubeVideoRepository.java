@@ -13,8 +13,8 @@ import com.GuideIn.project.model.YouTubeVideo;
 @Repository
 public interface YouTubeVideoRepository extends JpaRepository<YouTubeVideo,Long>{
 	
-	@Query(value="select * from youtube_vedio where ?1 is null or topic=?1",nativeQuery=true)
-	Page<YouTubeVideo> findByTopic(String topic, Pageable pageable);
+	@Query(value="select * from youtube_vedio where ?1 is null or topic=?1 and ?2 is null or duration=?2",nativeQuery=true)
+	Page<YouTubeVideo> findByTopic(String topic,String duration, Pageable pageable);
 	
 	
 	
