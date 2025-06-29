@@ -18,10 +18,10 @@ public class Company {
 	    private Long id;
 		
 	    private String companyName;
-
+	@Column(columnDefinition = "TEXT")
 	    private String industry;
 
-	    @Column(length = 1000)
+	    @Column(columnDefinition = "TEXT")
 	    private String companyOverview;
 		@Column(columnDefinition = "TEXT")
 	    private String careerPageUrl;
