@@ -108,12 +108,13 @@ public class DataViewService {
 		// TODO Auto-generated method stub
 		
 		String courseCategory=allparams.getOrDefault("courseCategory", null);
+		String duration=allparams.getOrDefault("duration",null);
 //		String modeOfClass=allparams.getOrDefault("modeOfClass", null);
 	    Pageable pageable = PageRequest.of(page, size);
 	    Page<Certification> videoPage;
 
 	   
-	        videoPage = certificationRepository.getdataByFilter(courseCategory, pageable);
+	        videoPage = certificationRepository.getdataByFilter(courseCategory,duration, pageable);
 	    
 
 	    Map<String, Object> response = new HashMap<>();
