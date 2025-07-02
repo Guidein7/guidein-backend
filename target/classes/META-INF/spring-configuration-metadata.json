@@ -1,0 +1,42 @@
+{
+  "groups": [
+    {
+      "name": "plivo",
+      "type": "com.GuideIn.plivo.PlivoConfig",
+      "sourceType": "com.GuideIn.plivo.PlivoConfig"
+    },
+    {
+      "name": "razorpay",
+      "type": "com.GuideIn.razorpay.RazorpayConfig",
+      "sourceType": "com.GuideIn.razorpay.RazorpayConfig"
+    }
+  ],
+  "properties": [
+    {
+      "name": "plivo.auth-id",
+      "type": "java.lang.String",
+      "sourceType": "com.GuideIn.plivo.PlivoConfig"
+    },
+    {
+      "name": "plivo.auth-token",
+      "type": "java.lang.String",
+      "sourceType": "com.GuideIn.plivo.PlivoConfig"
+    },
+    {
+      "name": "plivo.verify-app-uuid",
+      "type": "java.lang.String",
+      "sourceType": "com.GuideIn.plivo.PlivoConfig"
+    },
+    {
+      "name": "razorpay.key-id",
+      "type": "java.lang.String",
+      "sourceType": "com.GuideIn.razorpay.RazorpayConfig"
+    },
+    {
+      "name": "razorpay.secret",
+      "type": "java.lang.String",
+      "sourceType": "com.GuideIn.razorpay.RazorpayConfig"
+    }
+  ],
+  "hints": []
+}
