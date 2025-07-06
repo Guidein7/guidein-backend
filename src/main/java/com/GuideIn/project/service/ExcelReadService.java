@@ -62,7 +62,7 @@ public class ExcelReadService {
                  course.setCourseBatch(getCellValue(row, 8));
                  course.setComputerLab(getCellValue(row, 9));
                  course.setEstimatedCoursePrice(getCellValue(row, 10));
-                 course.setRating(Double.parseDouble(  getCellValue(row, 11)));
+                 course.setRating( getCellValue(row, 11));
                    course.setNumberOfReviews(getCellValue(row, 12));
                        course.setWebsiteUrl(getCellValue(row, 13));
                        course.setJobAssistance(getCellValue(row, 14));
