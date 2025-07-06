@@ -39,7 +39,7 @@ public class TemplateGeneratorService {
             }
             else if(type.equals("courseInfo")) {
             	columns=new String[] {
-                        "Course Name", "Institute Name", "Location", "Address", "Mobile Number",
+                        "Course Name", "Institute Name", "Location","sub location", "Address", "Mobile Number",
                         "Course Duration", "Mode of Class (Online/Offline/Hybrid)", "Course Batch", "Computer Lab",
                         "Estimated Course Price", "Rating (out of 5)", "Number of Reviews", "Website URL (if any)",
                         "Job Assistance", "Institute Description (Short)", "Map Location", "Tags (e.g., Placement Support, Project-Based)"
