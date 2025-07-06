@@ -53,21 +53,22 @@ public class ExcelReadService {
                 CourseInfo course =new CourseInfo();
                 course.setCourseName(getCellValue(row, 0));
                  course.setInstituteName(getCellValue(row, 1));       
-                course.setLocation(getCellValue(row, 2));       
-                 course.setAddress(getCellValue(row, 3));
-                 course.setMobileNumber(getCellValue(row, 4));
-                 course.setCourseDuration(getCellValue(row, 5));
-                 course.setModeOfClass(getCellValue(row, 6));
-                 course.setCourseBatch(getCellValue(row, 7));
-                 course.setComputerLab(getCellValue(row, 8));
-                 course.setEstimatedCoursePrice(getCellValue(row, 9));
-                 course.setRating(  getCellValue(row, 10));
-                   course.setNumberOfReviews(getCellValue(row, 11));
-                       course.setWebsiteUrl(getCellValue(row, 12));
-                       course.setJobAssistance(getCellValue(row, 13));
-                       course.setInstituteDescription(getCellValue(row, 14));
-                       course.setMapLocation(getCellValue(row, 15));
-                        course.setTags(getCellValue(row, 16));
+                course.setLocation(getCellValue(row, 2)); 
+                course.setSubLocation(getCellValue(row, 3));
+                 course.setAddress(getCellValue(row, 4));
+                 course.setMobileNumber(getCellValue(row, 5));
+                 course.setCourseDuration(getCellValue(row, 6));
+                 course.setModeOfClass(getCellValue(row, 7));
+                 course.setCourseBatch(getCellValue(row, 8));
+                 course.setComputerLab(getCellValue(row, 9));
+                 course.setEstimatedCoursePrice(getCellValue(row, 10));
+                 course.setRating(Double.parseDouble(  getCellValue(row, 11)));
+                   course.setNumberOfReviews(getCellValue(row, 12));
+                       course.setWebsiteUrl(getCellValue(row, 13));
+                       course.setJobAssistance(getCellValue(row, 14));
+                       course.setInstituteDescription(getCellValue(row, 15));
+                       course.setMapLocation(getCellValue(row, 16));
+                        course.setTags(getCellValue(row, 17));
                        
                         
 
