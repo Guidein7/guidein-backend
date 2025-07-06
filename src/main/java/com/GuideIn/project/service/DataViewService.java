@@ -33,6 +33,8 @@ import com.GuideIn.project.repository.CompanyRepository;
 import com.GuideIn.project.repository.CourseInfoRepository;
 import com.GuideIn.project.repository.StudentDataRepository;
 import com.GuideIn.project.repository.YouTubeVideoRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class DataViewService {
@@ -56,12 +58,21 @@ public class DataViewService {
 	
 	@Value("${uploadfile.path}")
 	private String uploadDir;
-
+	
+	@Autowired
+	private ObjectMapper objectMapper;
     DataViewService(TemplateGenearationController templateGenearationController) {
         this.templateGenearationController = templateGenearationController;
     }
 
 	public Map<String, Object> getDataWithPagenation(Map<String, String> allparams, int page, int size) {
+		try {
+//			objectMapper.writeValueAsString(allparams);
+			System.out.println(objectMapper.writeValueAsString(allparams));
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		if(allparams.get("type").equals("youtube")) {
 			return getYoutubeData(allparams,page,size);
 		}
@@ -108,8 +119,7 @@ public class DataViewService {
 		// TODO Auto-generated method stub
 		
 		String courseCategory=allparams.getOrDefault("courseCategory", null);
-		String duration=allparams.getOrDefault("duration",null);
-//		String modeOfClass=allparams.getOrDefault("modeOfClass", null);
+		String duration=allparams.getOrDefault("duration", null);
 	    Pageable pageable = PageRequest.of(page, size);
 	    Page<Certification> videoPage;
 
@@ -131,12 +141,16 @@ public class DataViewService {
 		// Location, Price, Course Duration,Mode of class
 		String location=allparams.getOrDefault("location", null);
 		String modeOfClass=allparams.getOrDefault("modeOfClass", null);
-		String duration=allparams.getOrDefault("duration",null);
+		String duration=allparams.getOrDefault("duration", null);
+		String courseName=allparams.getOrDefault("key", null);
+		String instituteName=allparams.getOrDefault("key", null);
+		System.out.println("course_name"+courseName);
+		System.out.println("course_name"+instituteName);
 	    Pageable pageable = PageRequest.of(page, size);
 	    Page<CourseInfo> videoPage;
 
 	   
-	        videoPage = courseInfoRepository.findByFilters(location,modeOfClass,duration, pageable);
+	        videoPage = courseInfoRepository.findByFilters(location,modeOfClass,duration,courseName, instituteName,pageable);
 	    
 
 	    Map<String, Object> response = new HashMap<>();
@@ -184,12 +198,14 @@ public class DataViewService {
 
 	private Map<String, Object> getYoutubeData(Map<String, String> allparams, int page, int size) {
 		 String topic = allparams.getOrDefault("topic", null);
-		String duration=allparams.getOrDefault("duration", null);
+		 String duration=allparams.getOrDefault("duration", null);
+		 String tags=allparams.getOrDefault("tags", null);
+		 String vedioTitle=allparams.getOrDefault("vedioTitle", null);
 		    Pageable pageable = PageRequest.of(page, size);
 		    Page<YouTubeVideo> videoPage;
 
 		   
-		        videoPage = youTubeVideoRepository.findByTopic(topic, duration,pageable);
+		        videoPage = youTubeVideoRepository.findByTopic(topic,duration,vedioTitle, pageable);
 		    
 
 		    Map<String, Object> response = new HashMap<>();
@@ -230,12 +246,10 @@ public class DataViewService {
 		Set<String> modeOfClass=new HashSet<>();
 		for(String value:values) {
 			String arr[]=value.split(",");
-			if(arr.length==4){
 			location.add(arr[0]);
 			price.add(arr[1]);
 			courseDuration.add(arr[2]);
 			modeOfClass.add(arr[3]);
-			}
 		}
 		data.put("location", location);
 		data.put("price", price);
@@ -252,13 +266,9 @@ public class DataViewService {
 	Set<String> companyName=new HashSet<>();
 	for(String value:values) {
 		String arr[]=value.split(",");
-		if(arr.length==3){
 		industry.add(arr[0]);
-		
 		hiringStatus.add(arr[1]);
-		
 		companyName.add(arr[2]);
-		}
 	}
 	data.put("industry", industry);
 	data.put("hiringStatus", hiringStatus);
@@ -286,8 +296,10 @@ public class DataViewService {
 		List<String> topic=youTubeVideoRepository.getdisinctTopics();
 		
 		List<String> duration=youTubeVideoRepository.getdistictduration();
+		List<String> tags=youTubeVideoRepository.getdistinctTags();
 		data.put("topic", topic);
 		data.put("duration", duration);
+		data.put("tags", tags);
 		return data;
 	}
 
