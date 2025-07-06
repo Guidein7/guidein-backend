@@ -69,6 +69,16 @@ public class CourseInfo {
 	    private String tags;
 	    
 	    private String filePath;
+	    
+	    private String subLocation;
+
+		public String getSubLocation() {
+			return subLocation;
+		}
+
+		public void setSubLocation(String subLocation) {
+			this.subLocation = subLocation;
+		}
 
 		public Long getId() {
 			return id;
@@ -237,7 +247,7 @@ public class CourseInfo {
 		public int hashCode() {
 			return Objects.hash(address, computerLab, courseBatch, courseDuration, courseName, estimatedCoursePrice,
 					filePath, id, instituteDescription, instituteName, jobAssistance, location, mapLocation,
-					mobileNumber, modeOfClass, numberOfReviews, rating, tags, websiteUrl);
+					mobileNumber, modeOfClass, numberOfReviews, rating, subLocation, tags, websiteUrl);
 		}
 
 		@Override
@@ -262,7 +272,8 @@ public class CourseInfo {
 					&& Objects.equals(mobileNumber, other.mobileNumber)
 					&& Objects.equals(modeOfClass, other.modeOfClass)
 					&& Objects.equals(numberOfReviews, other.numberOfReviews) && Objects.equals(rating, other.rating)
-					&& Objects.equals(tags, other.tags) && Objects.equals(websiteUrl, other.websiteUrl);
+					&& Objects.equals(subLocation, other.subLocation) && Objects.equals(tags, other.tags)
+					&& Objects.equals(websiteUrl, other.websiteUrl);
 		}
 
 		
