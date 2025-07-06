@@ -246,10 +246,12 @@ public class DataViewService {
 		Set<String> modeOfClass=new HashSet<>();
 		for(String value:values) {
 			String arr[]=value.split(",");
+			if(arr.length==4){
 			location.add(arr[0]);
 			price.add(arr[1]);
 			courseDuration.add(arr[2]);
 			modeOfClass.add(arr[3]);
+			}
 		}
 		data.put("location", location);
 		data.put("price", price);
@@ -266,9 +268,11 @@ public class DataViewService {
 	Set<String> companyName=new HashSet<>();
 	for(String value:values) {
 		String arr[]=value.split(",");
+		if(arr.length==3){
 		industry.add(arr[0]);
 		hiringStatus.add(arr[1]);
 		companyName.add(arr[2]);
+		}
 	}
 	data.put("industry", industry);
 	data.put("hiringStatus", hiringStatus);
