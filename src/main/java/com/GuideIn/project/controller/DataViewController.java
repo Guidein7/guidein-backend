@@ -29,7 +29,8 @@ public class DataViewController {
 	private DataViewService dataViewService;
 	
 	@GetMapping("view/data")
-	public ResponseEntity<Object> getData(@RequestParam Map<String,String> allparams,@DefaultValue(value="0") int page,@DefaultValue(value="5")int size){
+	public ResponseEntity<Object> getData(@RequestParam Map<String,String> allparams, @RequestParam(defaultValue = "0") int page,
+		    @RequestParam(defaultValue = "5") int size){
 		Map<String,Object> map=new HashMap<>();
 		try {
 			map=dataViewService.getDataWithPagenation(allparams,page,size);
