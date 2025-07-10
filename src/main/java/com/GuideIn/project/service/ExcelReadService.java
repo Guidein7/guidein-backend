@@ -122,15 +122,30 @@ public class ExcelReadService {
    
 	}
 	
-	 private String getString(Cell cell) {
-	        if (cell == null) return null;
-	        if (cell.getCellType() == CellType.STRING) return cell.getStringCellValue();
-	        else if (cell.getCellType() == CellType.NUMERIC)
-	            return DateUtil.isCellDateFormatted(cell)
-	                ? cell.getLocalDateTimeCellValue().toString()
-	                : Double.toString(cell.getNumericCellValue());
-	        else return cell.toString();
-	    }
+	 // private String getString(Cell cell) {
+	 //        if (cell == null) return null;
+	 //        if (cell.getCellType() == CellType.STRING) return cell.getStringCellValue();
+	 //        else if (cell.getCellType() == CellType.NUMERIC)
+	 //            return DateUtil.isCellDateFormatted(cell)
+	 //                ? cell.getLocalDateTimeCellValue().toString()
+	 //                : Double.toString(cell.getNumericCellValue());
+	 //        else return cell.toString();
+	 //    }
+
+	private String getString(Cell cell) {
+    if (cell == null) return null;
+
+    if (cell.getCellType() == CellType.STRING) {
+        return cell.getStringCellValue().trim();
+    } else if (cell.getCellType() == CellType.NUMERIC) {
+        return DateUtil.isCellDateFormatted(cell)
+            ? cell.getLocalDateTimeCellValue().toString().trim()
+            : Double.toString(cell.getNumericCellValue()).trim();
+    } else {
+        return cell.toString().trim();
+    }
+}
+
 
 	 public void importCompanyFromExcel(MultipartFile file) throws Exception{
 		 try (Workbook wb = WorkbookFactory.create(file.getInputStream())) {
