@@ -338,10 +338,13 @@ public class DataViewService {
 		
 	}
 
-	public void modifyRecord(MultipartFile file, Object value, String type) {
+	public void modifyRecord(MultipartFile file, Object value, String type) throws Exception{
 		try {
+			System.out.println("oblekkkk=>"+objectMapper.writeValueAsString(value));
+			String json = objectMapper.writeValueAsString(value);
 		if(type.equals("youtube")) {
-			YouTubeVideo vedio=(YouTubeVideo)value;
+			objectMapper.readValue(json, YouTubeVideo.class);
+			YouTubeVideo vedio=objectMapper.readValue(json, YouTubeVideo.class);
 			if(file!=null)
 			vedio.setFilePath(saveMultipartFile(file));
 			youTubeVideoRepository.save(vedio);
@@ -349,7 +352,7 @@ public class DataViewService {
 			
 		}
 		else if(type.equals("certificate")) {
-			Certification certificate=	(Certification)value;
+			Certification certificate=objectMapper.readValue(json, Certification.class);
 			if(file!=null)
 			certificate.setFilePath(saveMultipartFile(file));
 		certificationRepository.save(certificate);
@@ -357,14 +360,14 @@ public class DataViewService {
 		}
 		else if(type.equals("career")) {
 			
-			Company company=(Company)value;
+			Company company=objectMapper.readValue(json, Company.class);
 			if(file!=null)
 			company.setFilePath(saveMultipartFile(file));
 			companyRepository.save(company);
 			
 		}
 		else if(type.equals("courseInfo")) {
-			CourseInfo courseInfo=(CourseInfo)value;
+			CourseInfo courseInfo=objectMapper.readValue(json, CourseInfo.class);
 			if(file!=null)
 			courseInfo.setFilePath(saveMultipartFile(file));
 			courseInfoRepository.save(courseInfo);
