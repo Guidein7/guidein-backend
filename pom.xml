@@ -34,15 +34,15 @@
         </dependency>
 
         <!-- MySQL Driver -->
-    <!--   <dependency>
+     <dependency>
     <groupId>mysql</groupId>
     <artifactId>mysql-connector-java</artifactId>
     <version>8.0.33</version>
-</dependency> -->
-		<dependency>
+</dependency> 
+	  <!-- 	<dependency>
     <groupId>org.postgresql</groupId>
-    <artifactId>postgresql</artifactId> <!-- You can update this to the latest version -->
-</dependency>
+    <artifactId>postgresql</artifactId> 
+</dependency>  -->
         <!-- Apache POI for Excel -->
         <dependency>
             <groupId>org.apache.poi</groupId>
