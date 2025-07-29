@@ -31,8 +31,9 @@ public class BlogService {
 	
 	@Autowired
 	private BlogRepository blogRepository;
-	
-	private final String uploadDir = "uploads/";
+
+	@Value("${file.upload-dir}")
+	private  String uploadDir;
 
 	public void createNewBlog(Blogs blog, MultipartFile file){
 		blog.setCreatedAt(LocalDateTime.now());
