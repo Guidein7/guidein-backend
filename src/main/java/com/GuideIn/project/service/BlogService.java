@@ -25,6 +25,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.GuideIn.project.model.Blogs;
 import com.GuideIn.project.repository.BlogRepository;
+import org.springframework.beans.factory.annotation.Value;
+
 
 @Service
 public class BlogService {
