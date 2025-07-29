@@ -124,25 +124,56 @@ public class BlogService {
 	    else return duration.toDays() + " days ago";
 	}
 	
+	// public String uploadFile(MultipartFile file) throws Exception {
+ //        if (file.isEmpty()) {
+ //            throw new IllegalArgumentException("File is empty");
+ //        }
+
+ //        // Validate file type (PNG, JPG, GIF)
+ //        String contentType = file.getContentType();
+ //        if (!contentType.equals("image/png") && !contentType.equals("image/jpeg") && !contentType.equals("image/gif")) {
+ //            throw new IllegalArgumentException("Only PNG, JPG, or GIF files are allowed");
+ //        }
+
+ //        // Generate unique filename
+ //        String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+ //        Path filePath = Paths.get(uploadDir + fileName);
+ //        Files.write(filePath, file.getBytes());
+
+ //        // Return file URL (adjust based on your server setup)
+ //        return filePath.toAbsolutePath().toString(); // Example: use S3 URL for cloud storage
+ //    }
+
 	public String uploadFile(MultipartFile file) throws Exception {
-        if (file.isEmpty()) {
-            throw new IllegalArgumentException("File is empty");
-        }
-
-        // Validate file type (PNG, JPG, GIF)
-        String contentType = file.getContentType();
-        if (!contentType.equals("image/png") && !contentType.equals("image/jpeg") && !contentType.equals("image/gif")) {
-            throw new IllegalArgumentException("Only PNG, JPG, or GIF files are allowed");
-        }
-
-        // Generate unique filename
-        String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
-        Path filePath = Paths.get(uploadDir + fileName);
-        Files.write(filePath, file.getBytes());
-
-        // Return file URL (adjust based on your server setup)
-        return filePath.toAbsolutePath().toString(); // Example: use S3 URL for cloud storage
+    if (file.isEmpty()) {
+        throw new IllegalArgumentException("File is empty");
     }
+
+    String contentType = file.getContentType();
+    if (!contentType.equals("image/png") &&
+        !contentType.equals("image/jpeg") &&
+        !contentType.equals("image/gif")) {
+        throw new IllegalArgumentException("Only PNG, JPG, or GIF files are allowed");
+    }
+
+    // Generate unique filename
+    String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+    Path dirPath = Paths.get(uploadDir);
+
+    // ✅ Ensure directory exists
+    if (!Files.exists(dirPath)) {
+        Files.createDirectories(dirPath);  // <-- This line fixes the problem
+    }
+
+    Path filePath = dirPath.resolve(fileName);
+
+    // Write file
+    Files.write(filePath, file.getBytes());
+
+    // Return file path or URL
+    return filePath.toAbsolutePath().toString();
+}
+
 
 
 	public void modifyBlog(Blogs blog, MultipartFile file) {
