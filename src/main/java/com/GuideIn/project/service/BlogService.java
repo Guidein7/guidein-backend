@@ -176,9 +176,19 @@ public class BlogService {
 
 
 
-	public void modifyBlog(Blogs blog, MultipartFile file) {
-		// TODO Auto-generated method stub
+	public void modifyBlog(Blogs blog, MultipartFile file) throws Exception {
 		
+		 Optional<Blogs> existingOptional = blogRepository.findById(blog.getId());
+        if (existingOptional.isEmpty()) {
+            throw new IllegalArgumentException("Blog not found with ID: " + blog.getId());
+        }
+		// TODO Auto-generated method stub
+		if (file != null && !file.isEmpty()) {
+            existingBlog.setThumbnail(uploadFile(file));
+            existingBlog.setFileType(file.getContentType());
+        }
+		 blogRepository.save(existingBlog);
+		}
 	}
 	
 	
