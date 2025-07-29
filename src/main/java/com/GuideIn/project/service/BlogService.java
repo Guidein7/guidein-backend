@@ -188,7 +188,7 @@ public class BlogService {
             existingBlog.setFileType(file.getContentType());
         }
 		 blogRepository.save(existingBlog);
-		}
+		
 	}
 	
 	
