@@ -184,10 +184,10 @@ public class BlogService {
         }
 		// TODO Auto-generated method stub
 		if (file != null && !file.isEmpty()) {
-            existingBlog.setThumbnail(uploadFile(file));
-            existingBlog.setFileType(file.getContentType());
+            blog.setThumbnail(uploadFile(file));
+            blog.setFileType(file.getContentType());
         }
-		 blogRepository.save(existingBlog);
+		 blogRepository.save(blog);
 		
 	}
 	
