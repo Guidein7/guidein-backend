@@ -2,7 +2,7 @@ name: Backend Notify
 
 on:
   workflow_run:
-    workflows: ["Guidein Backend End CI/CD"]
+    workflows: ["Guidein Backend End CI/CD"]  # This MUST exactly match the name of your backend CI/CD workflow
     types:
       - completed
 
